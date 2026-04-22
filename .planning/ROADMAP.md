@@ -11,7 +11,7 @@
 - [x] **Phase 2: Auth & Onboarding** - User authentication and household setup (completed 2026-04-22)
 - [x] **Phase 3: Transactions** - Core transaction entry, accounts, and categories (completed 2026-04-22)
 - [x] **Phase 4: Household Sharing** - Invite link, real-time sync, partner UI (completed 2026-04-22)
-- [ ] **Phase 5: CSV Import** - Bank CSV upload, mapping, dedup, and undo
+- [x] **Phase 5: CSV Import** - Bank CSV upload, mapping, dedup, and undo (completed 2026-04-22)
 - [ ] **Phase 6: Budgets, Goals & Dashboard** - Budget caps, savings goals, and the main dashboard
 - [ ] **Phase 7: Benchmarks** - BLS/HUD/Zillow ingestion and Insights page
 - [ ] **Phase 8: Forecasting** - Deterministic spend forecasts and cash flow projections
@@ -105,7 +105,7 @@ Plans:
 Plans:
 - [x] 05-01-PLAN.md — Migration (import_id FK), Zod schemas, CSV parser, bank format detection (8 banks), dedup hash, amount normalization
 - [x] 05-02-PLAN.md — CSV row transform, server actions (checkDuplicates, suggestCategories, executeImport, getImports, getImportDetail, undoImport)
-- [ ] 05-03-PLAN.md — Import page UI (upload, preview, column mapping, duplicate review, import history, undo), navigation updates
+- [x] 05-03-PLAN.md — Import page UI (upload, preview, column mapping, duplicate review, import history, undo), navigation updates
 **UI hint**: yes
 
 ### Phase 6: Budgets, Goals & Dashboard
@@ -154,7 +154,7 @@ Plans:
 | 2. Auth & Onboarding | 6/6 | Complete   | 2026-04-22 |
 | 3. Transactions | 6/6 | Complete | 2026-04-22 |
 | 4. Household Sharing | 3/3 | Complete | 2026-04-22 |
-| 5. CSV Import | 0/3 | Not started | - |
+| 5. CSV Import | 3/3 | Complete   | 2026-04-22 |
 | 6. Budgets, Goals & Dashboard | 0/? | Not started | - |
 | 7. Benchmarks | 0/? | Not started | - |
 | 8. Forecasting | 0/? | Not started | - |

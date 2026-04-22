@@ -66,8 +66,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### CSV Import
 
-- [ ] **CSVP-01**: User can upload a .csv file via drag-and-drop or file picker
-- [ ] **CSVP-02**: Preview shows first 10 rows with column-mapping dropdowns (date, amount, merchant, category, account)
+- [x] **CSVP-01**: User can upload a .csv file via drag-and-drop or file picker
+- [x] **CSVP-02**: Preview shows first 10 rows with column-mapping dropdowns (date, amount, merchant, category, account)
 - [x] **CSVP-03**: Smart detection for common bank formats (Chase, BofA, Wells Fargo, Capital One, Apple Card, Discover, AMEX, Mint)
 - [x] **CSVP-04**: Amount handling supports both signed single column and separate debit/credit columns with explicit user confirmation of sign interpretation
 - [x] **CSVP-05**: Duplicate detection via hash (account_id + date + amount + first 20 chars merchant) with user choice to skip or import
@@ -212,8 +212,8 @@ Updated during roadmap creation.
 | SHAR-04 | Phase 4 | Complete |
 | SHAR-05 | Phase 4 | Complete |
 | SHAR-06 | Phase 4 | Complete |
-| CSVP-01 | Phase 5 | Pending |
-| CSVP-02 | Phase 5 | Pending |
+| CSVP-01 | Phase 5 | Complete |
+| CSVP-02 | Phase 5 | Complete |
 | CSVP-03 | Phase 5 | Complete |
 | CSVP-04 | Phase 5 | Complete |
 | CSVP-05 | Phase 5 | Complete |

@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-22T14:59:54.226Z"
+last_updated: "2026-04-22T15:09:51.992Z"
 progress:
   total_phases: 8
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 20
-  completed_plans: 19
+  completed_plans: 20
 ---
 
 # Project State: Hearth Budget
@@ -38,7 +38,7 @@ Plan: 3 of 3
 | 2 | Auth & Onboarding | Complete |
 | 3 | Transactions | Complete |
 | 4 | Household Sharing | Complete |
-| 5 | CSV Import | Not started |
+| 5 | CSV Import | Complete |
 | 6 | Budgets, Goals & Dashboard | Not started |
 | 7 | Benchmarks | Not started |
 | 8 | Forecasting | Not started |
@@ -104,6 +104,10 @@ Plan: 3 of 3
 | Sequential await for hash generation | Web Crypto fast enough for <10k rows; simpler than Promise.all batching |
 | executeImport receives pre-transformed rows | Transform happens client-side for preview before server insert |
 | suggestCategories limited to 50 merchants | Prevent abuse from large CSV files |
+| Phase 05-csv-import P03 | 6min | 3 tasks | 8 files |
+| Multi-step state machine in CsvUpload | Manages upload->preview->duplicates->done flow with single parent component |
+| Native select for column mapping | No shadcn Select component installed; native select styled with Tailwind |
+| Sheet for import detail dialog | Slide-over panel consistent with shadcn patterns for detail views |
 
 ### Todos
 
@@ -117,6 +121,6 @@ Plan: 3 of 3
 
 ## Session Continuity
 
-**Last updated:** 2026-04-22 after completing Phase 05 Plan 02
-**Next action:** Execute Phase 05 Plan 03 (CSV Import UI)
-**Resume context:** Phase 05 Plan 02 complete. Async transformCsvRows function and 6 server actions delivered: checkDuplicates, suggestCategories, executeImport, getImports, getImportDetail, undoImport. All use getHouseholdId pattern with RLS. TypeScript clean. Ready for import UI in Plan 03.
+**Last updated:** 2026-04-22 after completing Phase 05 Plan 03
+**Next action:** Begin Phase 06 (Budgets, Goals & Dashboard)
+**Resume context:** Phase 05 CSV Import complete (all 3 plans). Full import UI delivered: drag-and-drop upload with bank detection (8+ formats), 10-row preview with column mapping, duplicate review with category auto-suggest, import history with undo. Navigation updated. TypeScript clean. Ready for Phase 06.
