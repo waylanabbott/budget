@@ -64,7 +64,14 @@ Plans:
   3. User can search transactions and filter by account, category, and date range with results updating immediately
   4. Merchant name autocompletes from past household transactions; amount accepts positive decimals to 2 places with no sign required
   5. Account list shows current balances and allows creating, editing, and archiving accounts; categories support one level of nesting with icon and color
-**Plans**: TBD
+**Plans**: 6 plans
+Plans:
+- [ ] 03-01-PLAN.md — Zod v4 schemas and server actions for accounts, categories, and transactions (data layer)
+- [ ] 03-02-PLAN.md — Accounts page with create, edit, archive, and balance display
+- [ ] 03-03-PLAN.md — Categories management page with hierarchical display, create, edit, archive
+- [ ] 03-04-PLAN.md — Floating "+" FAB, transaction entry bottom sheet with amount-first input, category picker, merchant autocomplete
+- [ ] 03-05-PLAN.md — Transaction list page with date grouping, infinite scroll, search/filter, swipe edit/delete
+- [ ] 03-06-PLAN.md — Build verification and manual smoke test checkpoint
 **UI hint**: yes
 
 ### Phase 4: Household Sharing
@@ -137,7 +144,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Bootstrap | 2/2 | Complete   | 2026-04-22 |
 | 2. Auth & Onboarding | 6/6 | Complete   | 2026-04-22 |
-| 3. Transactions | 0/? | Not started | - |
+| 3. Transactions | 0/6 | In progress | - |
 | 4. Household Sharing | 0/? | Not started | - |
 | 5. CSV Import | 0/? | Not started | - |
 | 6. Budgets, Goals & Dashboard | 0/? | Not started | - |
