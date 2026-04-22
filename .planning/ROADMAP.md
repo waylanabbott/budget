@@ -84,7 +84,11 @@ Plans:
   3. Every transaction shows an avatar + initial indicating who entered it
   4. Dashboard header shows "You and [partner name]" once both members have joined
   5. When Realtime is unavailable, the app continues to work optimistically and syncs on tab focus
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 04-01-PLAN.md — Invite link server actions, public invite page, accept route, auth callback update, settings invite UI
+- [ ] 04-02-PLAN.md — Household member query, avatar+initial on transaction rows, "You and [partner]" header
+- [ ] 04-03-PLAN.md — Supabase Realtime subscription hooks with visibilitychange fallback, wired into transaction list
 **UI hint**: yes
 
 ### Phase 5: CSV Import
@@ -145,7 +149,7 @@ Plans:
 | 1. Bootstrap | 2/2 | Complete   | 2026-04-22 |
 | 2. Auth & Onboarding | 6/6 | Complete   | 2026-04-22 |
 | 3. Transactions | 6/6 | Complete | 2026-04-22 |
-| 4. Household Sharing | 0/? | Not started | - |
+| 4. Household Sharing | 0/3 | In progress | - |
 | 5. CSV Import | 0/? | Not started | - |
 | 6. Budgets, Goals & Dashboard | 0/? | Not started | - |
 | 7. Benchmarks | 0/? | Not started | - |
