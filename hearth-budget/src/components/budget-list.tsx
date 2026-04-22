@@ -15,6 +15,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { calcBudgetPace, type BudgetPace } from '@/lib/budget-math'
 import {
   upsertBudget,
@@ -27,6 +38,8 @@ interface BudgetListProps {
   budgets: BudgetWithSpent[]
   month: string
   unbudgetedCategories: Array<{ id: string; name: string; icon: string | null; color: string | null }>
+  memberNames: Record<string, string>
+  currentUserId: string
 }
 
 function PaceBadge({ pace }: { pace: BudgetPace }) {
@@ -39,9 +52,9 @@ function PaceBadge({ pace }: { pace: BudgetPace }) {
         : 'On track'
   const variant =
     pace.status === 'over'
-      ? 'text-red-600 bg-red-50 border-red-200'
+      ? 'text-destructive bg-destructive/10 border-destructive/30'
       : pace.status === 'under'
-        ? 'text-green-600 bg-green-50 border-green-200'
+        ? 'text-[var(--success)] bg-[var(--success)]/10 border-[var(--success)]/30'
         : 'text-muted-foreground bg-muted'
   return (
     <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${variant}`}>
@@ -53,9 +66,13 @@ function PaceBadge({ pace }: { pace: BudgetPace }) {
 function BudgetRow({
   budget,
   month,
+  memberNames,
+  currentUserId,
 }: {
   budget: BudgetWithSpent
   month: string
+  memberNames: Record<string, string>
+  currentUserId: string
 }) {
   const [editing, setEditing] = useState(false)
   const [editAmount, setEditAmount] = useState(budget.amount.toString())
@@ -96,9 +113,9 @@ function BudgetRow({
 
   const progressColor =
     pace.status === 'over'
-      ? '[&>div]:bg-red-500'
+      ? '[&>div]:bg-destructive'
       : pace.status === 'under'
-        ? '[&>div]:bg-green-500'
+        ? '[&>div]:bg-[var(--success)]'
         : ''
 
   return (
@@ -133,15 +150,25 @@ function BudgetRow({
               ${budget.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
             </button>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 text-destructive"
-            onClick={handleDelete}
-            disabled={isPending}
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger
+              render={<Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" disabled={isPending} />}
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Remove budget?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will remove the {budget.category_name} budget cap for this month. Your transactions are not affected.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete}>Remove</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
@@ -154,17 +181,30 @@ function BudgetRow({
 
       <div className="flex justify-between text-xs text-muted-foreground">
         <span>{progress}% used</span>
-        <span className={remaining < 0 ? 'text-red-600 font-medium' : ''}>
+        <span className={remaining < 0 ? 'text-destructive font-medium' : ''}>
           {remaining >= 0
             ? `$${remaining.toLocaleString(undefined, { maximumFractionDigits: 0 })} left`
             : `$${Math.abs(remaining).toLocaleString(undefined, { maximumFractionDigits: 0 })} over`}
         </span>
       </div>
+
+      {Object.keys(memberNames).length > 1 && Object.keys(budget.spentByPerson).length > 0 && (
+        <div className="flex gap-3 text-[11px] text-muted-foreground">
+          {Object.entries(budget.spentByPerson)
+            .sort((a, b) => b[1] - a[1])
+            .map(([userId, amount]) => (
+              <span key={userId} className="tabular-nums">
+                {userId === currentUserId ? 'You' : memberNames[userId] ?? 'Partner'}:{' '}
+                ${amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              </span>
+            ))}
+        </div>
+      )}
     </div>
   )
 }
 
-export function BudgetList({ budgets, month, unbudgetedCategories }: BudgetListProps) {
+export function BudgetList({ budgets, month, unbudgetedCategories, memberNames, currentUserId }: BudgetListProps) {
   const [isPending, startTransition] = useTransition()
   const [addingCategory, setAddingCategory] = useState('')
   const [addingAmount, setAddingAmount] = useState('')
@@ -229,7 +269,7 @@ export function BudgetList({ budgets, month, unbudgetedCategories }: BudgetListP
         <Card>
           <CardContent className="pt-4 text-center">
             <p className="text-xs text-muted-foreground">Remaining</p>
-            <p className={`text-lg font-semibold tabular-nums ${totalRemaining < 0 ? 'text-red-600' : ''}`}>
+            <p className={`text-lg font-semibold tabular-nums ${totalRemaining < 0 ? 'text-destructive' : ''}`}>
               ${Math.abs(totalRemaining).toLocaleString(undefined, { maximumFractionDigits: 0 })}
               {totalRemaining < 0 ? ' over' : ''}
             </p>
@@ -250,7 +290,7 @@ export function BudgetList({ budgets, month, unbudgetedCategories }: BudgetListP
         <Card>
           <CardContent className="p-0">
             {budgets.map((budget) => (
-              <BudgetRow key={budget.id} budget={budget} month={month} />
+              <BudgetRow key={budget.id} budget={budget} month={month} memberNames={memberNames} currentUserId={currentUserId} />
             ))}
           </CardContent>
         </Card>

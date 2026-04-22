@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { getHouseholdMembers } from '@/app/actions/members'
 import { getTransactions } from '@/app/actions/transactions'
 import { getGoals, getAccountBalances } from '@/app/actions/goals'
+import { getForecastData } from '@/app/actions/forecasts'
+import { getBudgetsWithSpending, getSpendingByPerson } from '@/app/actions/budgets'
 import { ArrowRightLeft, Target } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import {
@@ -13,6 +15,10 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import { SpendVsCaps } from '@/components/dashboard/spend-vs-caps'
+import { RunwayWidget } from '@/components/dashboard/runway-widget'
+import { CashFlowMini } from '@/components/dashboard/cash-flow-mini'
+import { SpendingByPerson } from '@/components/dashboard/spending-by-person'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -22,10 +28,20 @@ export default async function DashboardPage() {
 
   if (!user) redirect('/login')
 
-  const [{ data: members }, txResult, { data: goals }] = await Promise.all([
+  const [
+    { data: members },
+    txResult,
+    { data: goals },
+    forecastResult,
+    budgetResult,
+    personSpendResult,
+  ] = await Promise.all([
     getHouseholdMembers(),
     getTransactions({ limit: 5 }),
     getGoals(),
+    getForecastData(),
+    getBudgetsWithSpending(),
+    getSpendingByPerson(),
   ])
 
   const partner = members.find((m) => m.user_id !== user.id)
@@ -36,6 +52,13 @@ export default async function DashboardPage() {
     : 'Dashboard'
 
   const recentTransactions = txResult.data ?? []
+  const forecast = forecastResult.data
+  const budgets = budgetResult.data
+
+  const memberNames: Record<string, string> = {}
+  for (const m of members) {
+    memberNames[m.user_id] = m.display_name ?? 'Unknown'
+  }
 
   const allLinkedAccountIds = [
     ...new Set(
@@ -59,6 +82,28 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">{heading}</h1>
 
+      {/* Per-person spending breakdown */}
+      {personSpendResult.data.length > 1 && (
+        <SpendingByPerson
+          people={personSpendResult.data}
+          currentUserId={personSpendResult.currentUserId}
+        />
+      )}
+
+      {/* Budget + Runway widgets row */}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <SpendVsCaps
+          budgets={budgets}
+          memberNames={memberNames}
+          currentUserId={user.id}
+        />
+        <RunwayWidget runway={forecast?.runway ?? { totalBalance: 0, avgMonthlyOutflow: 0, months: null }} />
+      </div>
+
+      {forecast && forecast.cashFlow.length > 0 && (
+        <CashFlowMini data={forecast.cashFlow} />
+      )}
+
       {goalsWithProgress.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-3">
@@ -69,7 +114,7 @@ export default async function DashboardPage() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {goalsWithProgress.map((goal) => (
-              <Card key={goal.id} className={goal.current >= goal.target_amount && goal.target_amount > 0 ? 'border-green-500/50' : ''}>
+              <Card key={goal.id} className={goal.current >= goal.target_amount && goal.target_amount > 0 ? 'border-[var(--success)]/50' : ''}>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium">{goal.name}</CardTitle>
                 </CardHeader>
@@ -84,7 +129,7 @@ export default async function DashboardPage() {
                   </div>
                   <Progress
                     value={goal.progress}
-                    className={`h-2 ${goal.current >= goal.target_amount && goal.target_amount > 0 ? '[&>div]:bg-green-500' : ''}`}
+                    className={`h-2 ${goal.current >= goal.target_amount && goal.target_amount > 0 ? '[&>div]:bg-[var(--success)]' : ''}`}
                   />
                 </CardContent>
               </Card>
@@ -129,7 +174,7 @@ export default async function DashboardPage() {
                   <span
                     className={
                       tx.categories?.is_income
-                        ? 'font-semibold text-green-600 tabular-nums'
+                        ? 'font-semibold text-[var(--success)] tabular-nums'
                         : 'font-semibold tabular-nums'
                     }
                   >

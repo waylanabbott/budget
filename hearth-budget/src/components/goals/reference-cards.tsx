@@ -56,11 +56,11 @@ function ReferenceCard({ reference }: { reference: Reference }) {
 
         {reference.pros && reference.pros.length > 0 && (
           <div className="space-y-1">
-            <p className="text-xs font-medium text-green-600">Pros</p>
+            <p className="text-xs font-medium text-[var(--success)]">Pros</p>
             <ul className="space-y-0.5">
               {reference.pros.map((pro, i) => (
                 <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
-                  <span className="text-green-500 mt-0.5 shrink-0">+</span>
+                  <span className="text-[var(--success)] mt-0.5 shrink-0">+</span>
                   {pro}
                 </li>
               ))}
@@ -70,11 +70,11 @@ function ReferenceCard({ reference }: { reference: Reference }) {
 
         {reference.cons && reference.cons.length > 0 && (
           <div className="space-y-1">
-            <p className="text-xs font-medium text-red-600">Cons</p>
+            <p className="text-xs font-medium text-destructive">Cons</p>
             <ul className="space-y-0.5">
               {reference.cons.map((con, i) => (
                 <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
-                  <span className="text-red-500 mt-0.5 shrink-0">-</span>
+                  <span className="text-destructive mt-0.5 shrink-0">-</span>
                   {con}
                 </li>
               ))}

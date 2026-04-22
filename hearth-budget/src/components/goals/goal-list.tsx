@@ -72,7 +72,7 @@ export function GoalList({ goals, balances, accounts }: GoalListProps) {
           const links = goal.goal_account_links ?? []
 
           return (
-            <Card key={goal.id} className={isAchieved ? 'border-green-500/50' : ''}>
+            <Card key={goal.id} className={isAchieved ? 'border-[var(--success)]/50' : ''}>
               <CardHeader className="pb-2">
                 <CardTitle className="flex items-center justify-between text-sm">
                   <span className="font-medium">{goal.name}</span>
@@ -121,7 +121,7 @@ export function GoalList({ goals, balances, accounts }: GoalListProps) {
                 </div>
                 <Progress
                   value={progress}
-                  className={`h-2 ${isAchieved ? '[&>div]:bg-green-500' : ''}`}
+                  className={`h-2 ${isAchieved ? '[&>div]:bg-[var(--success)]' : ''}`}
                 />
 
                 {links.length > 0 && (
@@ -143,7 +143,7 @@ export function GoalList({ goals, balances, accounts }: GoalListProps) {
                             ) : isClosed ? (
                               <Pause className="h-3 w-3 text-muted-foreground" />
                             ) : (
-                              <TrendingUp className="h-3 w-3 text-green-500" />
+                              <TrendingUp className="h-3 w-3 text-[var(--success)]" />
                             )}
                             <span>{acct?.name ?? 'Unknown'}</span>
                             {isDormant && (
