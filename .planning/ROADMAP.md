@@ -44,7 +44,14 @@ Plans:
   3. Navigating to /app/* while unauthenticated redirects to the login page via middleware
   4. A new user completing onboarding sees their household name in the header and a default category tree ready to use
   5. The app shell shows correct bottom nav on mobile and sidebar on desktop
-**Plans**: TBD
+**Plans**: 6 plans
+Plans:
+- [x] 02-01-PLAN.md — Migrate middleware.ts to proxy.ts (Next.js 16), add /app/* auth guard, create .env.local, scaffold vitest config + test stubs
+- [ ] 02-02-PLAN.md — Install shadcn UI components (form, tabs, radio-group, sonner, sidebar, etc.), define Zod v4 schemas for auth and onboarding
+- [ ] 02-03-PLAN.md — Build /login page (tabbed email/password + magic link), auth server actions, /auth/callback route handler
+- [ ] 02-04-PLAN.md — Build ZIP-to-metro lookup utility, household server action, 3-step onboarding page with stepper UI
+- [ ] 02-05-PLAN.md — Build protected app shell: layout.tsx, AppShell/BottomNav/AppSidebar components, 5 placeholder /app/* pages
+- [ ] 02-06-PLAN.md — Manual smoke test checkpoint: verify full auth + onboarding + shell flow against live Supabase
 **UI hint**: yes
 
 ### Phase 3: Transactions
@@ -129,7 +136,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Bootstrap | 2/2 | Complete   | 2026-04-22 |
-| 2. Auth & Onboarding | 0/? | Not started | - |
+| 2. Auth & Onboarding | 0/6 | Not started | - |
 | 3. Transactions | 0/? | Not started | - |
 | 4. Household Sharing | 0/? | Not started | - |
 | 5. CSV Import | 0/? | Not started | - |

@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-22T03:52:09.729Z"
+last_updated: "2026-04-22T04:19:07.564Z"
 progress:
   total_phases: 8
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 8
+  completed_plans: 3
 ---
 
 # Project State: Hearth Budget
@@ -21,14 +21,14 @@ progress:
 
 **Core Value:** Two people can track every dollar together in real time — entering transactions in seconds, seeing budget progress, and comparing spending to honest public benchmarks.
 
-**Current Focus:** Phase 01 — bootstrap
+**Current Focus:** Phase 02 — auth-onboarding
 
 ---
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
+Phase: 02 (auth-onboarding) — EXECUTING
+Plan: 2 of 6
 
 ## Phase Map
 
@@ -73,6 +73,10 @@ Plan: Not started
 | turbopack: {} in nextConfig | Next.js 16 defaults to Turbopack; Serwist uses webpack — empty turbopack config resolves conflict |
 | webworker lib reference in sw.ts | ServiceWorkerGlobalScope not in dom lib; /// reference directive avoids dom/webworker conflict |
 | shadcn Nova preset (not slate custom) | shadcn v4.4 --defaults uses Nova preset; slate-like oklch colors used, configurable post-init |
+| Phase 02-auth-onboarding P01 | 8 | 3 tasks | 5 files |
+| proxy.ts replaces middleware.ts | Next.js 16 proxy function replaces deprecated middleware for route interception |
+| Auth guard inlines createServerClient+getUser() | Avoids dual-client stale cookie issues vs calling updateSession() separately |
+| .env.local placeholder values | User fills in real Supabase credentials before first pnpm dev run |
 
 ### Todos
 
@@ -86,6 +90,6 @@ Plan: Not started
 
 ## Session Continuity
 
-**Last updated:** 2026-04-22 after completing Plan 01-01 (scaffold)
-**Next action:** Execute plan 01-02 (database schema, RLS migrations)
-**Resume context:** hearth-budget/ scaffold complete at /Users/waylansmac/budget/hearth-budget. pnpm 10.33.0 installed, Next.js 16.2.4 running, all deps installed, build passes.
+**Last updated:** 2026-04-22 after completing Plan 02-01 (proxy migration + vitest scaffold)
+**Next action:** Execute plan 02-02
+**Resume context:** hearth-budget/ has proxy.ts (auth guard for /app/*), vitest.config.ts + test stubs, .env.local placeholders. User must fill .env.local with real Supabase credentials before pnpm dev. pnpm build passes. pnpm vitest run exits 0.
