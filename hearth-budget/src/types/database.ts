@@ -171,6 +171,7 @@ export type Database = {
           source: string
           external_id: string | null
           external_hash: string | null
+          import_id: string | null
           created_at: string
           updated_at: string
         }
@@ -187,6 +188,7 @@ export type Database = {
           source?: string
           external_id?: string | null
           external_hash?: string | null
+          import_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -203,6 +205,7 @@ export type Database = {
           source?: string
           external_id?: string | null
           external_hash?: string | null
+          import_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -226,6 +229,13 @@ export type Database = {
             columns: ['category_id']
             isOneToOne: false
             referencedRelation: 'categories'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'transactions_import_id_fkey'
+            columns: ['import_id']
+            isOneToOne: false
+            referencedRelation: 'imports'
             referencedColumns: ['id']
           },
         ]
