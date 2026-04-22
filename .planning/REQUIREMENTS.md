@@ -171,13 +171,95 @@ Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| — | — | — |
+| BOOT-01 | Phase 1 | Pending |
+| BOOT-02 | Phase 1 | Pending |
+| BOOT-03 | Phase 1 | Pending |
+| BOOT-04 | Phase 1 | Pending |
+| BOOT-05 | Phase 1 | Pending |
+| DBSC-01 | Phase 1 | Pending |
+| DBSC-02 | Phase 1 | Pending |
+| DBSC-03 | Phase 1 | Pending |
+| DBSC-04 | Phase 1 | Pending |
+| DBSC-05 | Phase 1 | Pending |
+| AUTH-01 | Phase 2 | Pending |
+| AUTH-02 | Phase 2 | Pending |
+| AUTH-03 | Phase 2 | Pending |
+| AUTH-04 | Phase 2 | Pending |
+| AUTH-05 | Phase 2 | Pending |
+| HSHD-01 | Phase 2 | Pending |
+| HSHD-02 | Phase 2 | Pending |
+| HSHD-03 | Phase 2 | Pending |
+| HSHD-04 | Phase 2 | Pending |
+| HSHD-05 | Phase 2 | Pending |
+| HSHD-06 | Phase 2 | Pending |
+| TXNS-01 | Phase 3 | Pending |
+| TXNS-02 | Phase 3 | Pending |
+| TXNS-03 | Phase 3 | Pending |
+| TXNS-04 | Phase 3 | Pending |
+| TXNS-05 | Phase 3 | Pending |
+| TXNS-06 | Phase 3 | Pending |
+| TXNS-07 | Phase 3 | Pending |
+| TXNS-08 | Phase 3 | Pending |
+| ACCT-01 | Phase 3 | Pending |
+| ACCT-02 | Phase 3 | Pending |
+| ACCT-03 | Phase 3 | Pending |
+| CATG-01 | Phase 3 | Pending |
+| CATG-02 | Phase 3 | Pending |
+| CATG-03 | Phase 3 | Pending |
+| SHAR-01 | Phase 4 | Pending |
+| SHAR-02 | Phase 4 | Pending |
+| SHAR-03 | Phase 4 | Pending |
+| SHAR-04 | Phase 4 | Pending |
+| SHAR-05 | Phase 4 | Pending |
+| SHAR-06 | Phase 4 | Pending |
+| CSVP-01 | Phase 5 | Pending |
+| CSVP-02 | Phase 5 | Pending |
+| CSVP-03 | Phase 5 | Pending |
+| CSVP-04 | Phase 5 | Pending |
+| CSVP-05 | Phase 5 | Pending |
+| CSVP-06 | Phase 5 | Pending |
+| CSVP-07 | Phase 5 | Pending |
+| CSVP-08 | Phase 5 | Pending |
+| BDGT-01 | Phase 6 | Pending |
+| BDGT-02 | Phase 6 | Pending |
+| BDGT-03 | Phase 6 | Pending |
+| BDGT-04 | Phase 6 | Pending |
+| BDGT-05 | Phase 6 | Pending |
+| BDGT-06 | Phase 6 | Pending |
+| GOAL-01 | Phase 6 | Pending |
+| GOAL-02 | Phase 6 | Pending |
+| GOAL-03 | Phase 6 | Pending |
+| GOAL-04 | Phase 6 | Pending |
+| DASH-01 | Phase 6 | Pending |
+| DASH-02 | Phase 6 | Pending |
+| DASH-03 | Phase 6 | Pending |
+| DASH-04 | Phase 6 | Pending |
+| DASH-05 | Phase 6 | Pending |
+| BNCH-01 | Phase 7 | Pending |
+| BNCH-02 | Phase 7 | Pending |
+| BNCH-03 | Phase 7 | Pending |
+| BNCH-04 | Phase 7 | Pending |
+| BNCH-05 | Phase 7 | Pending |
+| BNCH-06 | Phase 7 | Pending |
+| BNCH-07 | Phase 7 | Pending |
+| BNCH-08 | Phase 7 | Pending |
+| BNCH-09 | Phase 7 | Pending |
+| BNCH-10 | Phase 7 | Pending |
+| FCST-01 | Phase 8 | Pending |
+| FCST-02 | Phase 8 | Pending |
+| FCST-03 | Phase 8 | Pending |
+| FCST-04 | Phase 8 | Pending |
+| FCST-05 | Phase 8 | Pending |
+| FCST-06 | Phase 8 | Pending |
+| FCST-07 | Phase 8 | Pending |
+| FCST-08 | Phase 8 | Pending |
+| FCST-09 | Phase 8 | Pending |
 
 **Coverage:**
 - v1 requirements: 63 total
-- Mapped to phases: 0
-- Unmapped: 63 ⚠️
+- Mapped to phases: 63
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-21*
-*Last updated: 2026-04-21 after initial definition*
+*Last updated: 2026-04-21 after roadmap creation*
