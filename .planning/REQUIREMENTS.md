@@ -68,9 +68,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **CSVP-01**: User can upload a .csv file via drag-and-drop or file picker
 - [ ] **CSVP-02**: Preview shows first 10 rows with column-mapping dropdowns (date, amount, merchant, category, account)
-- [ ] **CSVP-03**: Smart detection for common bank formats (Chase, BofA, Wells Fargo, Capital One, Apple Card, Discover, AMEX, Mint)
-- [ ] **CSVP-04**: Amount handling supports both signed single column and separate debit/credit columns with explicit user confirmation of sign interpretation
-- [ ] **CSVP-05**: Duplicate detection via hash (account_id + date + amount + first 20 chars merchant) with user choice to skip or import
+- [x] **CSVP-03**: Smart detection for common bank formats (Chase, BofA, Wells Fargo, Capital One, Apple Card, Discover, AMEX, Mint)
+- [x] **CSVP-04**: Amount handling supports both signed single column and separate debit/credit columns with explicit user confirmation of sign interpretation
+- [x] **CSVP-05**: Duplicate detection via hash (account_id + date + amount + first 20 chars merchant) with user choice to skip or import
 - [ ] **CSVP-06**: Category auto-suggestion from past household transactions for matching merchants
 - [ ] **CSVP-07**: Batch insert with source='csv', logged in imports table with row count, status, errors
 - [ ] **CSVP-08**: Import detail view with one-click "Undo this import" that deletes the batch
@@ -214,9 +214,9 @@ Updated during roadmap creation.
 | SHAR-06 | Phase 4 | Complete |
 | CSVP-01 | Phase 5 | Pending |
 | CSVP-02 | Phase 5 | Pending |
-| CSVP-03 | Phase 5 | Pending |
-| CSVP-04 | Phase 5 | Pending |
-| CSVP-05 | Phase 5 | Pending |
+| CSVP-03 | Phase 5 | Complete |
+| CSVP-04 | Phase 5 | Complete |
+| CSVP-05 | Phase 5 | Complete |
 | CSVP-06 | Phase 5 | Pending |
 | CSVP-07 | Phase 5 | Pending |
 | CSVP-08 | Phase 5 | Pending |

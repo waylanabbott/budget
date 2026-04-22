@@ -103,7 +103,7 @@ Plans:
   5. Import history shows each import; clicking "Undo this import" removes the entire batch in one action
 **Plans**: 3 plans
 Plans:
-- [ ] 05-01-PLAN.md — Migration (import_id FK), Zod schemas, CSV parser, bank format detection (8 banks), dedup hash, amount normalization
+- [x] 05-01-PLAN.md — Migration (import_id FK), Zod schemas, CSV parser, bank format detection (8 banks), dedup hash, amount normalization
 - [ ] 05-02-PLAN.md — CSV row transform, server actions (checkDuplicates, suggestCategories, executeImport, getImports, getImportDetail, undoImport)
 - [ ] 05-03-PLAN.md — Import page UI (upload, preview, column mapping, duplicate review, import history, undo), navigation updates
 **UI hint**: yes
