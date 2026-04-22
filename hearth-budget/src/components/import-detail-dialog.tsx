@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 
 interface ImportDetailDialogProps {
   importId: string
@@ -51,6 +52,7 @@ export function ImportDetailDialog({
   } | null>(null)
   const [loading, setLoading] = useState(true)
   const [undoing, setUndoing] = useState(false)
+  const [confirmUndoOpen, setConfirmUndoOpen] = useState(false)
 
   useEffect(() => {
     if (!open || !importId) return
@@ -61,6 +63,9 @@ export function ImportDetailDialog({
     async function load() {
       const result = await getImportDetail(importId)
       if (!cancelled) {
+        if (result.error) {
+          toast.error(result.error)
+        }
         setDetail(result)
         setLoading(false)
       }
@@ -72,13 +77,7 @@ export function ImportDetailDialog({
     }
   }, [importId, open])
 
-  const handleUndo = async () => {
-    const count = detail?.import_row?.row_count ?? 0
-    const confirmed = window.confirm(
-      `This will delete all ${count} transactions from this import. Continue?`
-    )
-    if (!confirmed) return
-
+  const handleUndoConfirmed = async () => {
     setUndoing(true)
     const result = await undoImport(importId)
     setUndoing(false)
@@ -110,9 +109,9 @@ export function ImportDetailDialog({
                 <span
                   className={
                     detail.import_row.status === 'complete'
-                      ? 'text-green-600 dark:text-green-400'
+                      ? 'text-[var(--color-success)]'
                       : detail.import_row.status === 'error'
-                        ? 'text-red-600 dark:text-red-400'
+                        ? 'text-[var(--color-danger)]'
                         : ''
                   }
                 >
@@ -143,8 +142,8 @@ export function ImportDetailDialog({
                         <td
                           className={`px-1 py-1 text-right text-xs font-mono ${
                             txn.amount < 0
-                              ? 'text-red-600 dark:text-red-400'
-                              : 'text-green-600 dark:text-green-400'
+                              ? 'text-[var(--color-danger)]'
+                              : 'text-[var(--color-success)]'
                           }`}
                         >
                           ${Math.abs(txn.amount).toFixed(2)}
@@ -163,7 +162,7 @@ export function ImportDetailDialog({
             <SheetFooter>
               <Button
                 variant="destructive"
-                onClick={handleUndo}
+                onClick={() => setConfirmUndoOpen(true)}
                 disabled={undoing}
                 className="w-full"
               >
@@ -171,6 +170,16 @@ export function ImportDetailDialog({
                 Undo this Import
               </Button>
             </SheetFooter>
+
+            <ConfirmDialog
+              open={confirmUndoOpen}
+              onOpenChange={setConfirmUndoOpen}
+              title="Undo this import?"
+              description={`This will delete all ${detail.import_row.row_count} transactions from this import.`}
+              confirmLabel="Delete transactions"
+              variant="destructive"
+              onConfirm={handleUndoConfirmed}
+            />
           </>
         ) : (
           <div className="p-4">

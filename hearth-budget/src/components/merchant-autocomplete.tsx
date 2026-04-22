@@ -41,6 +41,7 @@ export function MerchantAutocomplete({ value, onChange }: MerchantAutocompletePr
     debounceRef.current = setTimeout(() => {
       startTransition(async () => {
         const result = await searchMerchants(newValue)
+        if (result.error) return
         if (result.data.length > 0) {
           setSuggestions(result.data.slice(0, 5))
           setShowDropdown(true)

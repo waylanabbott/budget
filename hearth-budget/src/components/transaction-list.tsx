@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback, useTransition } from 'react'
 import { format, parseISO } from 'date-fns'
 import { Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { getTransactions, updateTransaction } from '@/app/actions/transactions'
 import { TransactionRow, type TransactionWithRelations } from '@/components/transaction-row'
 import { TransactionFilters, type FilterState, EMPTY_FILTERS } from '@/components/transaction-filters'
@@ -40,12 +41,18 @@ type CategoryRow = {
   archived_at: string | null
 }
 
+type MemberInfo = {
+  user_id: string
+  label: string
+}
+
 interface TransactionListProps {
   initialTransactions: TransactionWithRelations[]
   initialCursor: string | null
   accounts: AccountRow[]
   categories: CategoryRow[]
   memberMap: Record<string, string>
+  members: MemberInfo[]
   householdId: string
 }
 
@@ -69,6 +76,7 @@ export function TransactionList({
   accounts,
   categories,
   memberMap,
+  members,
   householdId,
 }: TransactionListProps) {
   const [transactions, setTransactions] = useState(initialTransactions)
@@ -89,9 +97,14 @@ export function TransactionList({
       search: filters.search || undefined,
       account_id: filters.account_id || undefined,
       category_id: filters.category_id || undefined,
+      entered_by: filters.entered_by || undefined,
       date_from: filters.date_from || undefined,
       date_to: filters.date_to || undefined,
     })
+    if (result.error) {
+      toast.error(result.error)
+      return
+    }
     setTransactions(result.data ?? [])
     setCursor(result.nextCursor ?? null)
     setHasMore(!!result.nextCursor)
@@ -120,9 +133,15 @@ export function TransactionList({
       search: filters.search || undefined,
       account_id: filters.account_id || undefined,
       category_id: filters.category_id || undefined,
+      entered_by: filters.entered_by || undefined,
       date_from: filters.date_from || undefined,
       date_to: filters.date_to || undefined,
     })
+    if (result.error) {
+      toast.error(result.error)
+      setLoading(false)
+      return
+    }
     setTransactions((prev) => [...prev, ...(result.data ?? [])])
     setCursor(result.nextCursor ?? null)
     setHasMore(!!result.nextCursor)
@@ -165,9 +184,14 @@ export function TransactionList({
           search: newFilters.search || undefined,
           account_id: newFilters.account_id || undefined,
           category_id: newFilters.category_id || undefined,
+          entered_by: newFilters.entered_by || undefined,
           date_from: newFilters.date_from || undefined,
           date_to: newFilters.date_to || undefined,
         })
+        if (result.error) {
+          toast.error(result.error)
+          return
+        }
         setTransactions(result.data ?? [])
         setCursor(result.nextCursor ?? null)
         setHasMore(!!result.nextCursor)
@@ -188,9 +212,14 @@ export function TransactionList({
       search: filters.search || undefined,
       account_id: filters.account_id || undefined,
       category_id: filters.category_id || undefined,
+      entered_by: filters.entered_by || undefined,
       date_from: filters.date_from || undefined,
       date_to: filters.date_to || undefined,
     })
+    if (result.error) {
+      toast.error(result.error)
+      return
+    }
     setTransactions(result.data ?? [])
     setCursor(result.nextCursor ?? null)
     setHasMore(!!result.nextCursor)
@@ -204,18 +233,19 @@ export function TransactionList({
         <TransactionFilters
           accounts={accounts}
           categories={categories}
+          members={members}
           filters={filters}
           onFiltersChange={handleFiltersChange}
         />
         {realtimeStatus === 'connected' && (
           <span
-            className="inline-block size-2 rounded-full bg-green-500 shrink-0"
+            className="inline-block size-2 rounded-full bg-[var(--color-success)] shrink-0"
             title="Live sync active"
           />
         )}
         {realtimeStatus === 'disconnected' && (
           <span
-            className="inline-block size-2 rounded-full bg-amber-500 shrink-0"
+            className="inline-block size-2 rounded-full bg-[var(--color-warning)] shrink-0"
             title="Live sync unavailable -- refreshes on tab focus"
           />
         )}

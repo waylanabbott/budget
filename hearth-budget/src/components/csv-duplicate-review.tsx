@@ -58,6 +58,9 @@ export function CsvDuplicateReview({
       const dupResult = await checkDuplicates(accountId, hashes)
 
       if (cancelled) return
+      if (dupResult.error) {
+        toast.error(`Duplicate check failed: ${dupResult.error}`)
+      }
 
       const dupSet = new Set(dupResult.duplicateHashes)
       setDuplicateHashes(dupSet)
@@ -68,6 +71,9 @@ export function CsvDuplicateReview({
       if (merchants.length > 0) {
         const catResult = await suggestCategories(merchants)
         if (!cancelled) {
+          if (catResult.error) {
+            toast.error(`Category suggestions failed: ${catResult.error}`)
+          }
           setCategorySuggestions(catResult.suggestions)
         }
       }
@@ -168,12 +174,12 @@ export function CsvDuplicateReview({
       <div className="flex flex-wrap gap-3 text-sm">
         <span className="font-medium">{rows.length} rows ready</span>
         {duplicateHashes.size > 0 && (
-          <span className="text-yellow-600 dark:text-yellow-400">
+          <span className="text-[var(--color-warning)]">
             {duplicateHashes.size} duplicates found
           </span>
         )}
         {errors.length > 0 && (
-          <span className="text-red-600 dark:text-red-400">
+          <span className="text-[var(--color-danger)]">
             {errors.length} rows with errors
           </span>
         )}
@@ -181,11 +187,11 @@ export function CsvDuplicateReview({
 
       {/* Duplicate section */}
       {duplicateHashes.size > 0 && (
-        <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3 dark:border-yellow-800 dark:bg-yellow-900/20">
-          <h3 className="text-sm font-semibold text-yellow-800 dark:text-yellow-300">
+        <div className="rounded-lg border border-[var(--color-warning)]/20 bg-[var(--color-warning)]/5 p-3">
+          <h3 className="text-sm font-semibold text-[var(--color-warning)]">
             Duplicate Transactions
           </h3>
-          <p className="mt-1 text-xs text-yellow-700 dark:text-yellow-400">
+          <p className="mt-1 text-xs text-[var(--color-warning)]">
             These transactions already exist in this account. Uncheck to import anyway.
           </p>
           <div className="mt-2 max-h-40 space-y-1 overflow-y-auto">
@@ -204,12 +210,12 @@ export function CsvDuplicateReview({
                   />
                   <span className="text-muted-foreground">
                     {r.occurred_on} &middot;{' '}
-                    <span className={r.amount < 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}>
+                    <span className={r.amount < 0 ? 'text-[var(--color-danger)]' : 'text-[var(--color-success)]'}>
                       ${Math.abs(r.amount).toFixed(2)}
                     </span>
                     {r.merchant && ` &middot; ${r.merchant}`}
                   </span>
-                  <span className="text-yellow-600 dark:text-yellow-400">Skip</span>
+                  <span className="text-[var(--color-warning)]">Skip duplicate</span>
                 </label>
               ))}
           </div>
@@ -218,7 +224,7 @@ export function CsvDuplicateReview({
 
       {/* Rows table */}
       <div className="overflow-x-auto rounded-lg border">
-        <div className="max-h-[400px] overflow-y-auto">
+        <div className="max-h-96 overflow-y-auto">
           <table className="w-full text-sm">
             <thead className="sticky top-0 bg-muted/90 backdrop-blur-sm">
               <tr className="border-b">
@@ -254,8 +260,8 @@ export function CsvDuplicateReview({
                     <td
                       className={`px-2 py-1 text-right text-xs font-mono ${
                         row.amount < 0
-                          ? 'text-red-600 dark:text-red-400'
-                          : 'text-green-600 dark:text-green-400'
+                          ? 'text-[var(--color-danger)]'
+                          : 'text-[var(--color-success)]'
                       }`}
                     >
                       ${Math.abs(row.amount).toFixed(2)}
@@ -269,7 +275,7 @@ export function CsvDuplicateReview({
                             onChange={(e) =>
                               handleCategoryOverride(row.row_index, e.target.value)
                             }
-                            className="h-6 w-full max-w-[140px] rounded border border-input bg-background px-1 text-[10px] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            className="h-6 w-full max-w-[140px] rounded border border-input bg-background px-1 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                           >
                             {!overrideId && suggestion && (
                               <option value={suggestion.category_id}>
@@ -283,7 +289,7 @@ export function CsvDuplicateReview({
                             ))}
                           </select>
                           {!overrideId && suggestion && (
-                            <span className="shrink-0 rounded bg-blue-100 px-1 py-0.5 text-[9px] font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                            <span className="shrink-0 rounded bg-[var(--color-info)]/10 px-1 py-0.5 text-xs font-medium text-[var(--color-info)]">
                               auto
                             </span>
                           )}
@@ -294,7 +300,7 @@ export function CsvDuplicateReview({
                           onChange={(e) =>
                             handleCategoryOverride(row.row_index, e.target.value)
                           }
-                          className="h-6 w-full max-w-[140px] rounded border border-input bg-background px-1 text-[10px] text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                          className="h-6 w-full max-w-[140px] rounded border border-input bg-background px-1 text-xs text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                         >
                           <option value="">Uncategorized</option>
                           {categories.map((c) => (
@@ -307,15 +313,15 @@ export function CsvDuplicateReview({
                     </td>
                     <td className="px-2 py-1 text-xs">
                       {errorRow ? (
-                        <span className="text-red-600 dark:text-red-400">
+                        <span className="text-[var(--color-danger)]">
                           Error: {errorRow.error}
                         </span>
                       ) : isDuplicate ? (
-                        <span className="text-yellow-600 dark:text-yellow-400">
+                        <span className="text-[var(--color-warning)]">
                           Duplicate
                         </span>
                       ) : (
-                        <span className="text-green-600 dark:text-green-400">
+                        <span className="text-[var(--color-success)]">
                           New
                         </span>
                       )}

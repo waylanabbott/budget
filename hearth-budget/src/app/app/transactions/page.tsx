@@ -32,6 +32,11 @@ export default async function TransactionsPage() {
     getHouseholdMembers(),
   ])
 
+  const errors = [txResult.error, acctResult.error, catResult.error, membersResult.error].filter(Boolean)
+  if (errors.length > 0) {
+    throw new Error(`Failed to load transactions: ${errors.join(', ')}`)
+  }
+
   // Build memberMap: user_id -> initial
   const memberMap: Record<string, string> = {}
   for (const m of membersResult.data) {
@@ -39,6 +44,12 @@ export default async function TransactionsPage() {
   }
   // Override current user with their email initial (more reliable)
   memberMap[user.id] = (user.email?.[0] ?? '?').toUpperCase()
+
+  // Build members list for Person filter (current user first, labeled "You")
+  const members = membersResult.data.map((m) => ({
+    user_id: m.user_id,
+    label: m.user_id === user.id ? 'You' : (m.display_name ?? 'Partner'),
+  }))
 
   return (
     <div className="space-y-4">
@@ -49,6 +60,7 @@ export default async function TransactionsPage() {
         accounts={acctResult.data ?? []}
         categories={catResult.data ?? []}
         memberMap={memberMap}
+        members={members}
         householdId={householdId}
       />
     </div>

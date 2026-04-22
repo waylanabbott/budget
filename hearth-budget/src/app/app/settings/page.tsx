@@ -27,7 +27,7 @@ export default async function SettingsPage() {
   const isOwner = membership.role === 'owner'
 
   // Get all members in the household
-  const { data: members } = await supabase
+  const { data: members, error: _membersError } = await supabase
     .from('household_members')
     .select('user_id, role, display_name')
     .eq('household_id', membership.household_id)
@@ -129,7 +129,7 @@ export default async function SettingsPage() {
 
       <div>
         <h2 className="text-lg font-semibold mb-1">Account</h2>
-        <p className="text-sm text-muted-foreground mb-4">Sign out of Hearth Budget.</p>
+        <p className="text-sm text-muted-foreground mb-4">Sign out of Budget.</p>
         <form action={signOut}>
           <Button type="submit" variant="destructive">
             Sign out
