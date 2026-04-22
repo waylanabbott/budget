@@ -37,6 +37,7 @@ export type BudgetWithSpent = {
   category_color: string | null
   amount: number
   spent: number
+  spentByPerson: Record<string, number>
 }
 
 export async function getBudgetsWithSpending(month?: string): Promise<{
@@ -67,7 +68,7 @@ export async function getBudgetsWithSpending(month?: string): Promise<{
 
   const { data: spendRows, error: spendError } = await supabase
     .from('transactions')
-    .select('category_id, amount')
+    .select('category_id, amount, entered_by')
     .eq('household_id', householdId)
     .in('category_id', categoryIds)
     .gte('occurred_on', monthStart)
@@ -76,10 +77,14 @@ export async function getBudgetsWithSpending(month?: string): Promise<{
   if (spendError) return { data: [], month: monthStr, error: spendError.message }
 
   const spentByCategory = new Map<string, number>()
+  const spentByCategoryPerson = new Map<string, Record<string, number>>()
   for (const row of spendRows ?? []) {
     if (!row.category_id) continue
-    const prev = spentByCategory.get(row.category_id) ?? 0
-    spentByCategory.set(row.category_id, prev + Math.abs(row.amount))
+    const amt = Math.abs(row.amount)
+    spentByCategory.set(row.category_id, (spentByCategory.get(row.category_id) ?? 0) + amt)
+    const personMap = spentByCategoryPerson.get(row.category_id) ?? {}
+    personMap[row.entered_by] = (personMap[row.entered_by] ?? 0) + amt
+    spentByCategoryPerson.set(row.category_id, personMap)
   }
 
   const result: BudgetWithSpent[] = budgets.map((b) => {
@@ -92,6 +97,7 @@ export async function getBudgetsWithSpending(month?: string): Promise<{
       category_color: cat?.color ?? null,
       amount: b.amount,
       spent: spentByCategory.get(b.category_id) ?? 0,
+      spentByPerson: spentByCategoryPerson.get(b.category_id) ?? {},
     }
   })
 
@@ -259,4 +265,69 @@ export async function getUnbudgetedCategories(month: string): Promise<{
   )
 
   return { data: unbudgeted }
+}
+
+export type PersonSpending = {
+  userId: string
+  displayName: string
+  spent: number
+  transactionCount: number
+}
+
+export async function getSpendingByPerson(month?: string): Promise<{
+  data: PersonSpending[]
+  currentUserId: string
+  error?: string
+}> {
+  const { supabase, user, householdId } = await getHouseholdId()
+
+  const targetDate = month ? new Date(month + '-01') : new Date()
+  const monthStart = format(startOfMonth(targetDate), 'yyyy-MM-dd')
+  const monthEnd = format(endOfMonth(targetDate), 'yyyy-MM-dd')
+
+  const [txResult, membersResult] = await Promise.all([
+    supabase
+      .from('transactions')
+      .select('entered_by, amount, categories(is_income)')
+      .eq('household_id', householdId)
+      .gte('occurred_on', monthStart)
+      .lte('occurred_on', monthEnd),
+    supabase
+      .from('household_members')
+      .select('user_id, display_name')
+      .eq('household_id', householdId),
+  ])
+
+  if (txResult.error) return { data: [], currentUserId: user.id, error: txResult.error.message }
+
+  const nameMap: Record<string, string> = {}
+  for (const m of membersResult.data ?? []) {
+    nameMap[m.user_id] = m.display_name ?? 'Unknown'
+  }
+
+  const personMap: Record<string, { spent: number; count: number }> = {}
+  for (const m of membersResult.data ?? []) {
+    personMap[m.user_id] = { spent: 0, count: 0 }
+  }
+
+  for (const tx of txResult.data ?? []) {
+    const cat = tx.categories as { is_income: boolean } | null
+    if (cat?.is_income) continue
+    const entry = personMap[tx.entered_by]
+    if (entry) {
+      entry.spent += Math.abs(Number(tx.amount))
+      entry.count += 1
+    }
+  }
+
+  const result: PersonSpending[] = Object.entries(personMap).map(([userId, data]) => ({
+    userId,
+    displayName: nameMap[userId] ?? 'Unknown',
+    spent: Math.round(data.spent * 100) / 100,
+    transactionCount: data.count,
+  }))
+
+  result.sort((a, b) => b.spent - a.spent)
+
+  return { data: result, currentUserId: user.id }
 }

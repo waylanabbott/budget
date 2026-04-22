@@ -101,6 +101,37 @@ export async function updateAccount(
   return {}
 }
 
+export async function getAccountCurrentBalances(): Promise<{
+  data: Record<string, number>
+  error?: string
+}> {
+  const { supabase, householdId } = await getHouseholdId()
+
+  const { data: accounts } = await supabase
+    .from('accounts')
+    .select('id, starting_balance')
+    .eq('household_id', householdId)
+
+  if (!accounts) return { data: {} }
+
+  const { data: txns } = await supabase
+    .from('transactions')
+    .select('account_id, amount')
+    .eq('household_id', householdId)
+
+  const balances: Record<string, number> = {}
+  for (const acct of accounts) {
+    balances[acct.id] = Number(acct.starting_balance) || 0
+  }
+  for (const tx of txns ?? []) {
+    if (balances[tx.account_id] !== undefined) {
+      balances[tx.account_id] = balances[tx.account_id]! + Number(tx.amount)
+    }
+  }
+
+  return { data: balances }
+}
+
 export async function archiveAccount(
   id: string
 ): Promise<{ error?: string }> {

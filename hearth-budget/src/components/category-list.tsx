@@ -63,6 +63,11 @@ function CategoryRow({
                 Income
               </span>
             )}
+            {category.is_essential && (
+              <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                Essential
+              </span>
+            )}
           </div>
         </div>
 

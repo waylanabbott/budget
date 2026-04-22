@@ -55,6 +55,7 @@ export function CategoryFormDialog({
       icon: category?.icon ?? '',
       color: category?.color ?? '#6366F1',
       is_income: category?.is_income ?? false,
+      is_essential: category?.is_essential ?? false,
     },
   })
 
@@ -67,6 +68,7 @@ export function CategoryFormDialog({
         icon: category?.icon ?? '',
         color: category?.color ?? '#6366F1',
         is_income: category?.is_income ?? false,
+        is_essential: category?.is_essential ?? false,
       })
     }
   }, [category, open, form])
@@ -220,6 +222,34 @@ export function CategoryFormDialog({
                       This is an income category
                     </FormLabel>
                   </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="is_essential"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center gap-2">
+                    <FormControl>
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border border-input accent-primary"
+                        checked={field.value ?? false}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                      />
+                    </FormControl>
+                    <FormLabel className="cursor-pointer">
+                      Essential expense
+                    </FormLabel>
+                  </div>
+                  <FormDescription>
+                    Mark as essential (housing, food, utilities) for financial health scoring
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

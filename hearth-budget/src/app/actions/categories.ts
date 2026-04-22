@@ -109,6 +109,7 @@ export async function createCategory(
     icon: result.data.icon ?? null,
     color: result.data.color ?? null,
     is_income: result.data.is_income ?? false,
+    is_essential: result.data.is_essential ?? false,
     sort_order: nextSortOrder,
   })
 
@@ -137,6 +138,7 @@ export async function updateCategory(
       icon: result.data.icon ?? null,
       color: result.data.color ?? null,
       is_income: result.data.is_income ?? false,
+      is_essential: result.data.is_essential ?? false,
     })
     .eq('id', id)
     .eq('household_id', householdId)

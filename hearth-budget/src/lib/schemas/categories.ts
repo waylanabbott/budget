@@ -22,6 +22,7 @@ export const categorySchema = z.object({
     .nullable()
     .optional(),
   is_income: z.boolean().optional(),
+  is_essential: z.boolean().optional(),
 })
 
 export type CategoryInput = z.infer<typeof categorySchema>
