@@ -55,7 +55,7 @@ export function SpendingComparison({ comparisons, quintileLabel, dataYear }: Pro
       <CardContent className="space-y-1 px-4">
         {withBenchmark.length === 0 && (
           <p className="text-sm text-muted-foreground py-4">
-            No spending data this month. Add transactions to see comparisons.
+            No spending data yet. Add transactions to see comparisons.
           </p>
         )}
         {withBenchmark.map((c) => {

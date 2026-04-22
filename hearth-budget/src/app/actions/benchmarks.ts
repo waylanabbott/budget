@@ -69,16 +69,12 @@ export async function getInsightsData(): Promise<{
   const bounds = QUINTILE_BOUNDS[quintile]
 
   const now = new Date()
-  const monthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`
-  const monthEnd = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()).padStart(2, '0')}`
 
   const [spendingResult, blsResult, fmrResult, zillowResult] = await Promise.all([
     supabase
       .from('transactions')
-      .select('amount, categories(name, is_income)')
-      .eq('household_id', householdId)
-      .gte('occurred_on', monthStart)
-      .lte('occurred_on', monthEnd),
+      .select('amount, occurred_on, categories(name, is_income)')
+      .eq('household_id', householdId),
     supabase
       .from('benchmarks_bls_cex')
       .select('*')
@@ -100,12 +96,20 @@ export async function getInsightsData(): Promise<{
   const fmrRows = fmrResult.data ?? []
   const zillowRows = zillowResult.data ?? []
 
-  const spendByCategory: Record<string, number> = {}
+  // Calculate average monthly spend per category across all history
+  const totalByCategory: Record<string, number> = {}
+  const monthsSeen = new Set<string>()
   for (const tx of spending) {
     const cat = tx.categories as { name: string; is_income: boolean } | null
     if (!cat || cat.is_income) continue
-    const name = cat.name
-    spendByCategory[name] = (spendByCategory[name] || 0) + Math.abs(tx.amount)
+    totalByCategory[cat.name] = (totalByCategory[cat.name] || 0) + Math.abs(tx.amount)
+    monthsSeen.add(tx.occurred_on.slice(0, 7))
+  }
+  const numMonths = Math.max(monthsSeen.size, 1)
+
+  const spendByCategory: Record<string, number> = {}
+  for (const [name, total] of Object.entries(totalByCategory)) {
+    spendByCategory[name] = total / numMonths
   }
 
   const blsMap: Record<string, number> = {}
@@ -113,14 +117,33 @@ export async function getInsightsData(): Promise<{
     blsMap[row.category] = Number(row.annual_avg_spend) / 12
   }
 
+  // Map user categories to BLS categories when names don't match directly
+  const categoryToBls: Record<string, string> = {
+    'Gas': 'Transportation',
+    'Utilities': 'Housing',
+    'Car Insurance': 'Transportation',
+    'Subscriptions': 'Entertainment',
+    'Gym': 'Personal Care',
+    'Internet': 'Housing',
+    'Home Insurance': 'Housing',
+    'Parking': 'Transportation',
+    'Car Wash': 'Transportation',
+    'Food': 'Groceries',
+  }
+
   const categoryComparisons: CategorySpending[] = Object.entries(spendByCategory)
+    .filter(([name]) => name !== 'Savings Transfers')
     .map(([categoryName, monthlySpent]) => {
-      const benchmark = blsMap[categoryName] ?? null
+      const blsCategory = categoryToBls[categoryName] ?? categoryName
+      const benchmark = blsMap[blsCategory] ?? null
+      const label = blsCategory !== categoryName
+        ? `BLS CEX 2024 — ${blsCategory} (${bounds.label})`
+        : `BLS CEX 2024 (${bounds.label})`
       return {
         categoryName,
         monthlySpent: Math.round(monthlySpent * 100) / 100,
         blsBenchmark: benchmark !== null ? Math.round(benchmark * 100) / 100 : null,
-        blsLabel: benchmark !== null ? `BLS CEX 2024 (${bounds.label})` : null,
+        blsLabel: benchmark !== null ? label : null,
         diffPercent:
           benchmark !== null && benchmark > 0
             ? Math.round(((monthlySpent - benchmark) / benchmark) * 100)
@@ -128,20 +151,6 @@ export async function getInsightsData(): Promise<{
       }
     })
     .sort((a, b) => b.monthlySpent - a.monthlySpent)
-
-  const allBenchmarkedCategories = Object.keys(blsMap)
-  for (const cat of allBenchmarkedCategories) {
-    if (!spendByCategory[cat]) {
-      const val = blsMap[cat]!
-      categoryComparisons.push({
-        categoryName: cat,
-        monthlySpent: 0,
-        blsBenchmark: Math.round(val * 100) / 100,
-        blsLabel: `BLS CEX 2024 (${bounds.label})`,
-        diffPercent: -100,
-      })
-    }
-  }
 
   const fmr2br = fmrRows.find((r) => r.bedrooms === 2)
   const zoriRow = zillowRows.find((r) => r.metric === 'zori')
