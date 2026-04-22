@@ -1,6 +1,6 @@
 import * as z from 'zod'
 
-export const ACCOUNT_TYPES = ['checking', 'savings', 'credit_card', 'cash'] as const
+export const ACCOUNT_TYPES = ['checking', 'savings', 'credit_card', 'cash', 'retirement', 'investment'] as const
 export type AccountType = (typeof ACCOUNT_TYPES)[number]
 
 export const accountSchema = z.object({

@@ -1,8 +1,11 @@
-import { getAccounts } from '@/app/actions/accounts'
+import { getAccounts, getAccountCurrentBalances } from '@/app/actions/accounts'
 import { AccountList } from '@/components/account-list'
 
 export default async function AccountsPage() {
-  const { data: accounts, error } = await getAccounts()
+  const [{ data: accounts, error }, { data: balances }] = await Promise.all([
+    getAccounts(),
+    getAccountCurrentBalances(),
+  ])
 
   return (
     <div className="space-y-6">
@@ -10,7 +13,7 @@ export default async function AccountsPage() {
         <div>
           <h1 className="text-2xl font-bold">Accounts</h1>
           <p className="text-sm text-muted-foreground">
-            Manage your checking, savings, credit cards, and cash accounts.
+            Manage your checking, savings, retirement, and investment accounts.
           </p>
         </div>
       </div>
@@ -18,7 +21,7 @@ export default async function AccountsPage() {
       {error ? (
         <p className="text-destructive">Failed to load accounts: {error}</p>
       ) : (
-        <AccountList accounts={accounts ?? []} />
+        <AccountList accounts={accounts ?? []} balances={balances} />
       )}
     </div>
   )

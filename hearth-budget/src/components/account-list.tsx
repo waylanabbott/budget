@@ -25,6 +25,8 @@ const TYPE_LABELS: Record<string, string> = {
   savings: 'Savings',
   credit_card: 'Credit Card',
   cash: 'Cash',
+  retirement: 'Retirement',
+  investment: 'Investment',
 }
 
 const formatCurrency = new Intl.NumberFormat('en-US', {
@@ -34,9 +36,10 @@ const formatCurrency = new Intl.NumberFormat('en-US', {
 
 interface AccountListProps {
   accounts: AccountRow[]
+  balances: Record<string, number>
 }
 
-export function AccountList({ accounts }: AccountListProps) {
+export function AccountList({ accounts, balances }: AccountListProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingAccount, setEditingAccount] = useState<AccountRow | null>(null)
   const [archiveTarget, setArchiveTarget] = useState<AccountRow | null>(null)
@@ -83,44 +86,54 @@ export function AccountList({ accounts }: AccountListProps) {
         <>
           {activeAccounts.length > 0 && (
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              {activeAccounts.map((account) => (
-                <Card key={account.id} size="sm">
-                  <CardHeader>
-                    <CardTitle>{account.name}</CardTitle>
-                    <CardAction>
-                      <div className="flex gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          onClick={() => handleEdit(account)}
-                          aria-label={`Edit ${account.name}`}
-                        >
-                          <Pencil />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          onClick={() => setArchiveTarget(account)}
-                          disabled={isPending}
-                          aria-label={`Archive ${account.name}`}
-                        >
-                          <Archive />
-                        </Button>
+              {activeAccounts.map((account) => {
+                const currentBalance = balances[account.id] ?? account.starting_balance
+                return (
+                  <Card key={account.id} size="sm">
+                    <CardHeader>
+                      <CardTitle>{account.name}</CardTitle>
+                      <CardAction>
+                        <div className="flex gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            onClick={() => handleEdit(account)}
+                            aria-label={`Edit ${account.name}`}
+                          >
+                            <Pencil />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            onClick={() => setArchiveTarget(account)}
+                            disabled={isPending}
+                            aria-label={`Archive ${account.name}`}
+                          >
+                            <Archive />
+                          </Button>
+                        </div>
+                      </CardAction>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between">
+                        <span className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                          {TYPE_LABELS[account.type] ?? account.type}
+                        </span>
+                        <div className="text-right">
+                          <span className={`text-lg font-semibold tabular-nums ${currentBalance < 0 ? 'text-destructive' : ''}`}>
+                            {formatCurrency.format(currentBalance)}
+                          </span>
+                          {currentBalance !== account.starting_balance && (
+                            <p className="text-[10px] text-muted-foreground tabular-nums">
+                              Started at {formatCurrency.format(account.starting_balance)}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </CardAction>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <span className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
-                        {TYPE_LABELS[account.type] ?? account.type}
-                      </span>
-                      <span className="text-lg font-semibold tabular-nums">
-                        {formatCurrency.format(account.starting_balance)}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                )
+              })}
             </div>
           )}
 

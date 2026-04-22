@@ -10,6 +10,8 @@ import {
   Target,
   BarChart3,
   TrendingUp,
+  CalendarClock,
+  Wallet,
   Settings,
   LogOut,
 } from 'lucide-react'
@@ -30,8 +32,10 @@ const NAV_ITEMS = [
   { href: '/app/import', label: 'Import', icon: FileUp },
   { href: '/app/budgets', label: 'Budgets', icon: PieChart },
   { href: '/app/goals', label: 'Goals', icon: Target },
+  { href: '/app/accounts', label: 'Accounts', icon: Wallet },
   { href: '/app/forecast', label: 'Forecast', icon: TrendingUp },
   { href: '/app/insights', label: 'Insights', icon: BarChart3 },
+  { href: '/app/recurring-bills', label: 'Recurring Bills', icon: CalendarClock },
   { href: '/app/settings', label: 'Settings', icon: Settings },
 ] as const
 

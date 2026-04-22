@@ -35,6 +35,8 @@ const TYPE_LABELS: Record<(typeof ACCOUNT_TYPES)[number], string> = {
   savings: 'Savings',
   credit_card: 'Credit Card',
   cash: 'Cash',
+  retirement: 'Retirement',
+  investment: 'Investment',
 }
 
 interface AccountFormDialogProps {
