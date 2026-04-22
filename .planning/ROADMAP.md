@@ -7,7 +7,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Bootstrap** - Next.js 16 + Supabase + PWA shell + database schema and security
+- [x] **Phase 1: Bootstrap** - Next.js 16 + Supabase + PWA shell + database schema and security (completed 2026-04-22)
 - [ ] **Phase 2: Auth & Onboarding** - User authentication and household setup
 - [ ] **Phase 3: Transactions** - Core transaction entry, accounts, and categories
 - [ ] **Phase 4: Household Sharing** - Invite link, real-time sync, partner UI
@@ -31,7 +31,7 @@
 **Plans**: 2 plans
 Plans:
 - [x] 01-01-PLAN.md — Scaffold Next.js 16, install all deps, configure TypeScript/ESLint/Prettier, Supabase three-client split, PWA with Serwist, placeholder landing page
-- [ ] 01-02-PLAN.md — Write and push three Supabase migration files (schema + RLS + triggers), verify 14 tables deployed with RLS active
+- [x] 01-02-PLAN.md — Write and push three Supabase migration files (schema + RLS + triggers), verify 14 tables deployed with RLS active
 **UI hint**: yes
 
 ### Phase 2: Auth & Onboarding
@@ -128,7 +128,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Bootstrap | 1/2 | In Progress|  |
+| 1. Bootstrap | 2/2 | Complete   | 2026-04-22 |
 | 2. Auth & Onboarding | 0/? | Not started | - |
 | 3. Transactions | 0/? | Not started | - |
 | 4. Household Sharing | 0/? | Not started | - |

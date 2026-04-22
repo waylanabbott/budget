@@ -126,11 +126,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Database & Security
 
-- [ ] **DBSC-01**: Full schema deployed via Supabase migrations (all tables from plan)
-- [ ] **DBSC-02**: RLS enabled on every household-scoped table with membership subquery policy
-- [ ] **DBSC-03**: Service role key used only in Edge Functions and server Route Handlers, never in browser
-- [ ] **DBSC-04**: All timestamps stored as UTC, displayed in household timezone (America/Denver default)
-- [ ] **DBSC-05**: Transaction dates use local date string (not UTC conversion) to avoid off-by-one bugs
+- [x] **DBSC-01**: Full schema deployed via Supabase migrations (all tables from plan)
+- [x] **DBSC-02**: RLS enabled on every household-scoped table with membership subquery policy
+- [x] **DBSC-03**: Service role key used only in Edge Functions and server Route Handlers, never in browser
+- [x] **DBSC-04**: All timestamps stored as UTC, displayed in household timezone (America/Denver default)
+- [x] **DBSC-05**: Transaction dates use local date string (not UTC conversion) to avoid off-by-one bugs
 
 ## v2 Requirements
 
@@ -176,11 +176,11 @@ Updated during roadmap creation.
 | BOOT-03 | Phase 1 | Complete |
 | BOOT-04 | Phase 1 | Complete |
 | BOOT-05 | Phase 1 | Complete |
-| DBSC-01 | Phase 1 | Pending |
-| DBSC-02 | Phase 1 | Pending |
-| DBSC-03 | Phase 1 | Pending |
-| DBSC-04 | Phase 1 | Pending |
-| DBSC-05 | Phase 1 | Pending |
+| DBSC-01 | Phase 1 | Complete |
+| DBSC-02 | Phase 1 | Complete |
+| DBSC-03 | Phase 1 | Complete |
+| DBSC-04 | Phase 1 | Complete |
+| DBSC-05 | Phase 1 | Complete |
 | AUTH-01 | Phase 2 | Pending |
 | AUTH-02 | Phase 2 | Pending |
 | AUTH-03 | Phase 2 | Pending |
