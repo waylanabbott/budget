@@ -144,5 +144,27 @@ export async function transformCsvRows(
     })
   }
 
+  // Detect and fix intra-batch hash collisions (e.g. two $5 Starbucks on the same day)
+  const hashCounts = new Map<string, number>()
+  for (const row of rows) {
+    hashCounts.set(row.external_hash, (hashCounts.get(row.external_hash) ?? 0) + 1)
+  }
+
+  const hashSeq = new Map<string, number>()
+  for (const row of rows) {
+    if ((hashCounts.get(row.external_hash) ?? 0) > 1) {
+      const seq = hashSeq.get(row.external_hash) ?? 0
+      hashSeq.set(row.external_hash, seq + 1)
+      if (seq > 0) {
+        row.external_hash = await generateTransactionHash(
+          config.accountId,
+          row.occurred_on,
+          row.amount,
+          (row.merchant ?? '') + `#${seq}`
+        )
+      }
+    }
+  }
+
   return { rows, errors }
 }

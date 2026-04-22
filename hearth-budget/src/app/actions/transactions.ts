@@ -108,6 +108,7 @@ export async function getTransactions(params: {
   search?: string
   account_id?: string
   category_id?: string
+  entered_by?: string
   date_from?: string
   date_to?: string
 }): Promise<{
@@ -147,11 +148,15 @@ export async function getTransactions(params: {
     .eq('household_id', householdId)
     .order('occurred_on', { ascending: false })
     .order('created_at', { ascending: false })
+    .order('id', { ascending: false })
     .limit(limit + 1) // fetch one extra to determine if there's a next page
 
-  // Apply cursor (pagination by created_at of last item)
+  // Apply cursor (keyset pagination on created_at|id)
   if (params.cursor) {
-    query = query.lt('created_at', params.cursor)
+    const [cursorDate, cursorId] = params.cursor.split('|')
+    query = query.or(
+      `created_at.lt.${cursorDate},and(created_at.eq.${cursorDate},id.lt.${cursorId})`
+    )
   }
 
   // Apply filters
@@ -161,6 +166,10 @@ export async function getTransactions(params: {
 
   if (params.category_id) {
     query = query.eq('category_id', params.category_id)
+  }
+
+  if (params.entered_by) {
+    query = query.eq('entered_by', params.entered_by)
   }
 
   if (params.date_from) {
@@ -182,7 +191,10 @@ export async function getTransactions(params: {
   const rows = data ?? []
   const hasMore = rows.length > limit
   const items = hasMore ? rows.slice(0, limit) : rows
-  const nextCursor = hasMore ? items[items.length - 1]?.created_at ?? null : null
+  const lastItem = items[items.length - 1]
+  const nextCursor = hasMore && lastItem
+    ? `${lastItem.created_at}|${lastItem.id}`
+    : null
 
   return { data: items, nextCursor }
 }

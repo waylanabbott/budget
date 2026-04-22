@@ -25,7 +25,7 @@ export async function generateTransactionHash(
 ): Promise<string> {
   // Normalize merchant: trim, lowercase, first 20 chars
   const normalizedMerchant = merchant
-    ? merchant.trim().toLowerCase().slice(0, 20)
+    ? merchant.trim().replace(/\s+/g, ' ').toLowerCase().slice(0, 20)
     : ''
 
   const input = `${accountId}|${date}|${amount.toFixed(2)}|${normalizedMerchant}`
@@ -59,8 +59,9 @@ export function normalizeAmount(
   creditValue?: string
 ): number | null {
   const clean = (s: string): number => {
-    const stripped = s.replace(/[$,\s]/g, '')
-    return parseFloat(stripped)
+    const stripped = s.replace(/[$€£¥,\s]/g, '')
+    const val = parseFloat(stripped)
+    return isFinite(val) ? val : NaN
   }
 
   if (mode === 'single_signed') {

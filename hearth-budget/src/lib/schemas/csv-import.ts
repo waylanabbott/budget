@@ -35,7 +35,7 @@ export type ImportConfig = z.infer<typeof importConfigSchema>
 export const parsedCsvRowSchema = z.object({
   row_index: z.number().int(),
   occurred_on: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  amount: z.number(),
+  amount: z.number().finite(),
   merchant: z.string().nullable(),
   category_hint: z.string().nullable(),
   notes: z.string().nullable(),
