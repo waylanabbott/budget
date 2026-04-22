@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getInsightsData } from '@/app/actions/benchmarks'
 import { SpendingComparison } from '@/components/insights/spending-comparison'
-import { HousingComparison } from '@/components/insights/housing-comparison'
 import { SourceCitations } from '@/components/insights/source-citations'
 
 export default async function InsightsPage() {
@@ -40,8 +39,6 @@ export default async function InsightsPage() {
         quintileLabel={data.quintileLabel}
         dataYear={data.dataYear}
       />
-
-      <HousingComparison housing={data.housing} metro={data.metro} zip={data.zip} />
 
       <SourceCitations sources={data.sources} />
     </div>

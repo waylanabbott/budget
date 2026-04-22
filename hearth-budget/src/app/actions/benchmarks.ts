@@ -37,13 +37,6 @@ export interface CategorySpending {
   diffPercent: number | null
 }
 
-export interface HousingBenchmark {
-  hudFmr: { rent: number; bedrooms: number; dataYear: number } | null
-  zillowRent: number | null
-  zillowHomeValue: number | null
-  userRent: number | null
-}
-
 export interface InsightsData {
   quintile: string
   quintileLabel: string
@@ -51,7 +44,6 @@ export interface InsightsData {
   metro: string
   zip: string
   categoryComparisons: CategorySpending[]
-  housing: HousingBenchmark
   dataYear: number
   sources: { name: string; url: string; note: string }[]
 }
@@ -70,7 +62,7 @@ export async function getInsightsData(): Promise<{
 
   const now = new Date()
 
-  const [spendingResult, blsResult, fmrResult, zillowResult] = await Promise.all([
+  const [spendingResult, blsResult] = await Promise.all([
     supabase
       .from('transactions')
       .select('amount, occurred_on, categories(name, is_income)')
@@ -80,21 +72,10 @@ export async function getInsightsData(): Promise<{
       .select('*')
       .eq('income_bracket', quintile)
       .eq('data_year', 2024),
-    supabase
-      .from('benchmarks_hud_fmr')
-      .select('*')
-      .eq('zip_code', household.zip || '')
-      .eq('data_year', 2026),
-    supabase
-      .from('benchmarks_zillow')
-      .select('*')
-      .eq('zip_code', household.zip || ''),
   ])
 
   const spending = spendingResult.data ?? []
   const blsRows = blsResult.data ?? []
-  const fmrRows = fmrResult.data ?? []
-  const zillowRows = zillowResult.data ?? []
 
   // Calculate average monthly spend per category across all history
   const totalByCategory: Record<string, number> = {}
@@ -120,52 +101,49 @@ export async function getInsightsData(): Promise<{
   // Map user categories to BLS categories when names don't match directly
   const categoryToBls: Record<string, string> = {
     'Gas': 'Transportation',
-    'Utilities': 'Housing',
     'Car Insurance': 'Transportation',
     'Subscriptions': 'Entertainment',
     'Gym': 'Personal Care',
-    'Internet': 'Housing',
-    'Home Insurance': 'Housing',
     'Parking': 'Transportation',
     'Car Wash': 'Transportation',
     'Food': 'Groceries',
   }
 
-  const categoryComparisons: CategorySpending[] = Object.entries(spendByCategory)
-    .filter(([name]) => name !== 'Savings Transfers')
-    .map(([categoryName, monthlySpent]) => {
-      const blsCategory = categoryToBls[categoryName] ?? categoryName
+  // Group user categories by their BLS equivalent so we compare combined
+  // spending (Gas + Car Insurance + Car Wash) to one Transportation benchmark
+  const blsGrouped: Record<string, { userCategories: string[]; totalSpent: number }> = {}
+  for (const [name, spent] of Object.entries(spendByCategory)) {
+    if (name === 'Savings Transfers') continue
+    const blsCat = categoryToBls[name] ?? name
+    if (!blsGrouped[blsCat]) blsGrouped[blsCat] = { userCategories: [], totalSpent: 0 }
+    blsGrouped[blsCat].userCategories.push(name)
+    blsGrouped[blsCat].totalSpent += spent
+  }
+
+  const categoryComparisons: CategorySpending[] = Object.entries(blsGrouped)
+    .map(([blsCategory, { userCategories, totalSpent }]) => {
       const benchmark = blsMap[blsCategory] ?? null
-      const label = blsCategory !== categoryName
-        ? `BLS CEX 2024 — ${blsCategory} (${bounds.label})`
+      const displayName = userCategories.length === 1
+        ? userCategories[0]!
+        : blsCategory
+      const subcategories = userCategories.length > 1
+        ? userCategories.join(', ')
+        : null
+      const label = subcategories
+        ? `BLS CEX 2024 — includes ${subcategories} (${bounds.label})`
         : `BLS CEX 2024 (${bounds.label})`
       return {
-        categoryName,
-        monthlySpent: Math.round(monthlySpent * 100) / 100,
+        categoryName: displayName,
+        monthlySpent: Math.round(totalSpent * 100) / 100,
         blsBenchmark: benchmark !== null ? Math.round(benchmark * 100) / 100 : null,
         blsLabel: benchmark !== null ? label : null,
         diffPercent:
           benchmark !== null && benchmark > 0
-            ? Math.round(((monthlySpent - benchmark) / benchmark) * 100)
+            ? Math.round(((totalSpent - benchmark) / benchmark) * 100)
             : null,
       }
     })
     .sort((a, b) => b.monthlySpent - a.monthlySpent)
-
-  const fmr2br = fmrRows.find((r) => r.bedrooms === 2)
-  const zoriRow = zillowRows.find((r) => r.metric === 'zori')
-  const zhviRow = zillowRows.find((r) => r.metric === 'zhvi')
-
-  const rentSpent = spendByCategory['Rent / Mortgage'] ?? null
-
-  const housing: HousingBenchmark = {
-    hudFmr: fmr2br
-      ? { rent: Number(fmr2br.rent_amount), bedrooms: 2, dataYear: fmr2br.data_year }
-      : null,
-    zillowRent: zoriRow ? Number(zoriRow.value) : null,
-    zillowHomeValue: zhviRow ? Number(zhviRow.value) : null,
-    userRent: rentSpent,
-  }
 
   return {
     data: {
@@ -175,23 +153,12 @@ export async function getInsightsData(): Promise<{
       metro: household.metro || 'Unknown',
       zip: household.zip || 'Unknown',
       categoryComparisons,
-      housing,
       dataYear: 2024,
       sources: [
         {
           name: 'BLS Consumer Expenditure Survey',
           url: 'https://www.bls.gov/cex/',
           note: '2024 annual means by income quintile. National averages.',
-        },
-        {
-          name: 'HUD Fair Market Rents',
-          url: 'https://www.huduser.gov/portal/datasets/fmr.html',
-          note: 'FY2026. 40th percentile of gross rents (includes utilities).',
-        },
-        {
-          name: 'Zillow Research (ZORI/ZHVI)',
-          url: 'https://www.zillow.com/research/data/',
-          note: 'March 2026. Smoothed, seasonally adjusted index values.',
         },
       ],
     },

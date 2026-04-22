@@ -50,12 +50,9 @@ type CategoryOption = { id: string; name: string }
 
 const CATEGORY_TO_BLS: Record<string, string> = {
   'Gas': 'Transportation',
-  'Utilities': 'Housing',
   'Car Insurance': 'Transportation',
   'Subscriptions': 'Entertainment',
   'Gym': 'Personal Care',
-  'Internet': 'Housing',
-  'Home Insurance': 'Housing',
   'Parking': 'Transportation',
   'Car Wash': 'Transportation',
   'Food': 'Groceries',
@@ -96,6 +93,16 @@ function buildCategoryGroups(
     else groups.set(key, [bill])
   }
 
+  // When multiple user categories map to the same BLS category (e.g. Car Insurance
+  // + Car Wash both → Transportation), sum user spending before comparing
+  const userSpendByBlsCategory = new Map<string, number>()
+  for (const [cat, catBills] of groups.entries()) {
+    if (cat === 'Savings Transfers') continue
+    const blsCat = CATEGORY_TO_BLS[cat] ?? cat
+    const catMonthly = catBills.reduce((s, b) => s + billToMonthly(b), 0)
+    userSpendByBlsCategory.set(blsCat, (userSpendByBlsCategory.get(blsCat) ?? 0) + catMonthly)
+  }
+
   return Array.from(groups.entries())
     .filter(([cat]) => cat !== 'Savings Transfers')
     .map(([category, categoryBills]) => {
@@ -113,9 +120,11 @@ function buildCategoryGroups(
       const blsCategory = CATEGORY_TO_BLS[category] ?? category
       const benchmark = getBlsBenchmarkForCategory(blsCategory, quintile)
 
+      // Compare combined user spending for this BLS category, not just this one sub-category
+      const combinedUserSpend = userSpendByBlsCategory.get(blsCategory) ?? monthlyTotal
       const diffPercent =
         benchmark && benchmark.monthlyAvg > 0
-          ? Math.round(((monthlyTotal - benchmark.monthlyAvg) / benchmark.monthlyAvg) * 100)
+          ? Math.round(((combinedUserSpend - benchmark.monthlyAvg) / benchmark.monthlyAvg) * 100)
           : null
 
       return {
@@ -172,11 +181,16 @@ export function RecurringBillList({ bills, accounts, categories, quintile }: Pro
 
   const groups = buildCategoryGroups(bills, quintile)
 
-  const blsTotal = getBlsBenchmarkForCategory('Housing', quintile)
+  // Deduplicate: if Car Insurance + Car Wash both map to Transportation,
+  // only count Transportation's benchmark once in the total
   const totalExp = (() => {
+    const seen = new Set<string>()
     let sum = 0
     for (const g of groups) {
-      if (g.blsBenchmark) sum += g.blsBenchmark.monthlyAvg
+      if (g.blsBenchmark && !seen.has(g.blsCategory)) {
+        seen.add(g.blsCategory)
+        sum += g.blsBenchmark.monthlyAvg
+      }
     }
     return sum
   })()
