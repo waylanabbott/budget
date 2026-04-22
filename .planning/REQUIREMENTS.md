@@ -61,8 +61,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **SHAR-02**: Invited user can sign up or log in and join the household via invite link
 - [x] **SHAR-03**: Each transaction shows who entered it (avatar + initial)
 - [x] **SHAR-04**: Dashboard shows "You and [partner]" summary
-- [ ] **SHAR-05**: Transactions, budgets, and goals update live via Supabase Realtime when partner makes changes
-- [ ] **SHAR-06**: App falls back to optimistic UI + visibilitychange refetch when Realtime is unreliable
+- [x] **SHAR-05**: Transactions, budgets, and goals update live via Supabase Realtime when partner makes changes
+- [x] **SHAR-06**: App falls back to optimistic UI + visibilitychange refetch when Realtime is unreliable
 
 ### CSV Import
 
@@ -210,8 +210,8 @@ Updated during roadmap creation.
 | SHAR-02 | Phase 4 | Complete |
 | SHAR-03 | Phase 4 | Complete |
 | SHAR-04 | Phase 4 | Complete |
-| SHAR-05 | Phase 4 | Pending |
-| SHAR-06 | Phase 4 | Pending |
+| SHAR-05 | Phase 4 | Complete |
+| SHAR-06 | Phase 4 | Complete |
 | CSVP-01 | Phase 5 | Pending |
 | CSVP-02 | Phase 5 | Pending |
 | CSVP-03 | Phase 5 | Pending |

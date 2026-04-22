@@ -6,9 +6,9 @@ status: unknown
 last_updated: "2026-04-22T06:05:41.077Z"
 progress:
   total_phases: 8
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 17
-  completed_plans: 16
+  completed_plans: 17
 ---
 
 # Project State: Hearth Budget
@@ -21,14 +21,14 @@ progress:
 
 **Core Value:** Two people can track every dollar together in real time — entering transactions in seconds, seeing budget progress, and comparing spending to honest public benchmarks.
 
-**Current Focus:** Phase 04 — household-sharing
+**Current Focus:** Phase 05 — csv-import
 
 ---
 
 ## Current Position
 
-Phase: 04 (household-sharing) — EXECUTING
-Plan: 3 of 3
+Phase: 05 (csv-import) — PENDING
+Plan: 0 of ?
 
 ## Phase Map
 
@@ -37,7 +37,7 @@ Plan: 3 of 3
 | 1 | Bootstrap | Complete |
 | 2 | Auth & Onboarding | Complete |
 | 3 | Transactions | Complete |
-| 4 | Household Sharing | Not started |
+| 4 | Household Sharing | Complete |
 | 5 | CSV Import | Not started |
 | 6 | Budgets, Goals & Dashboard | Not started |
 | 7 | Benchmarks | Not started |
@@ -47,9 +47,9 @@ Plan: 3 of 3
 
 ## Performance Metrics
 
-**Plans completed:** 14
-**Plans total:** 14
-**Requirements met:** 35/63
+**Plans completed:** 17
+**Plans total:** 17
+**Requirements met:** 41/63
 
 ---
 
@@ -109,6 +109,6 @@ Plan: 3 of 3
 
 ## Session Continuity
 
-**Last updated:** 2026-04-22 after completing 04-01 (invite system)
-**Next action:** Continue Phase 04 — Plan 04-03 (role-based permissions)
-**Resume context:** Phase 04 Plan 01 complete. Invite link generation, public join page, accept route, and settings UI all implemented. Auth callback updated to pass through invite redirects. RLS migration adds invited-users-join-household policy. display_name populated on member insert.
+**Last updated:** 2026-04-22 after completing Phase 04
+**Next action:** Plan and execute Phase 05 (CSV Import)
+**Resume context:** Phases 1-4 complete. Phase 04 delivered: invite link system (create/redeem/expire), member display (avatar+initial, "You & [partner]" header), Supabase Realtime subscriptions on transactions with visibilitychange fallback. Migration conflict (duplicate display_name column) fixed with IF NOT EXISTS guard. 32 tests passing, build clean with 15 routes.

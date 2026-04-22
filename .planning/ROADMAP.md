@@ -10,7 +10,7 @@
 - [x] **Phase 1: Bootstrap** - Next.js 16 + Supabase + PWA shell + database schema and security (completed 2026-04-22)
 - [x] **Phase 2: Auth & Onboarding** - User authentication and household setup (completed 2026-04-22)
 - [x] **Phase 3: Transactions** - Core transaction entry, accounts, and categories (completed 2026-04-22)
-- [ ] **Phase 4: Household Sharing** - Invite link, real-time sync, partner UI
+- [x] **Phase 4: Household Sharing** - Invite link, real-time sync, partner UI (completed 2026-04-22)
 - [ ] **Phase 5: CSV Import** - Bank CSV upload, mapping, dedup, and undo
 - [ ] **Phase 6: Budgets, Goals & Dashboard** - Budget caps, savings goals, and the main dashboard
 - [ ] **Phase 7: Benchmarks** - BLS/HUD/Zillow ingestion and Insights page
@@ -88,7 +88,7 @@ Plans:
 Plans:
 - [x] 04-01-PLAN.md — Invite link server actions, public invite page, accept route, auth callback update, settings invite UI
 - [x] 04-02-PLAN.md — Household member query, avatar+initial on transaction rows, "You and [partner]" header
-- [ ] 04-03-PLAN.md — Supabase Realtime subscription hooks with visibilitychange fallback, wired into transaction list
+- [x] 04-03-PLAN.md — Supabase Realtime subscription hooks with visibilitychange fallback, wired into transaction list
 **UI hint**: yes
 
 ### Phase 5: CSV Import
@@ -149,7 +149,7 @@ Plans:
 | 1. Bootstrap | 2/2 | Complete   | 2026-04-22 |
 | 2. Auth & Onboarding | 6/6 | Complete   | 2026-04-22 |
 | 3. Transactions | 6/6 | Complete | 2026-04-22 |
-| 4. Household Sharing | 0/3 | In progress | - |
+| 4. Household Sharing | 3/3 | Complete | 2026-04-22 |
 | 5. CSV Import | 0/? | Not started | - |
 | 6. Budgets, Goals & Dashboard | 0/? | Not started | - |
 | 7. Benchmarks | 0/? | Not started | - |
