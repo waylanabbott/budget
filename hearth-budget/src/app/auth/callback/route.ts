@@ -35,6 +35,12 @@ export async function GET(request: NextRequest) {
     } = await supabase.auth.getUser()
 
     if (user) {
+      // If redirecting to an invite accept route, skip household check —
+      // the invite accept handler manages household membership
+      if (next && next.startsWith('/invite/')) {
+        return NextResponse.redirect(new URL(next, requestUrl.origin))
+      }
+
       const { data: membership } = await supabase
         .from('household_members')
         .select('household_id')
