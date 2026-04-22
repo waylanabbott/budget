@@ -33,6 +33,7 @@ export async function getCategories(): Promise<{
     icon: string | null
     color: string | null
     is_income: boolean
+    is_essential: boolean | null
     sort_order: number
     archived_at: string | null
   }>
@@ -61,6 +62,7 @@ export async function getAllCategories(): Promise<{
     icon: string | null
     color: string | null
     is_income: boolean
+    is_essential: boolean | null
     sort_order: number
     archived_at: string | null
   }>

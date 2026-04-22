@@ -20,9 +20,10 @@ export default async function InvitePage({
 
   const supabase = await createClient()
 
-  const { data: invite } = await supabase.rpc('get_invite_by_token', {
+  const { data: rows } = await supabase.rpc('get_invite_by_token', {
     p_token: token,
   })
+  const invite = rows?.[0] ?? null
 
   if (!invite || !invite.is_valid) {
     return (
@@ -57,7 +58,7 @@ export default async function InvitePage({
         <CardHeader>
           <CardTitle>Join {householdName}</CardTitle>
           <CardDescription>
-            You have been invited to join this household on Hearth Budget. Sign
+            You have been invited to join this household on Budget. Sign
             up or log in to continue.
           </CardDescription>
         </CardHeader>

@@ -32,6 +32,7 @@ export async function getAccounts(): Promise<{
     type: string
     starting_balance: number
     is_archived: boolean
+    contribution_status: string | null
     created_at: string
   }>
   error?: string
