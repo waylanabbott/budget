@@ -99,7 +99,7 @@ export function TransactionSheet({
         onOpenChange(false)
       }
     } catch {
-      setSubmitError('Something went wrong. Please try again.')
+      setSubmitError('Failed to save transaction — please try again.')
     } finally {
       setIsSubmitting(false)
     }

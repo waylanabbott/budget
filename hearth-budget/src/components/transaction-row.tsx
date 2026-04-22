@@ -2,8 +2,10 @@
 
 import { useRef, useState, useCallback } from 'react'
 import { Pencil, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { deleteTransaction } from '@/app/actions/transactions'
 import type { Database } from '@/types/database'
 
@@ -28,6 +30,7 @@ export function TransactionRow({ transaction, onEdit, memberMap }: TransactionRo
   const [translateX, setTranslateX] = useState(0)
   const [swiped, setSwiped] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
 
   const isIncome = transaction.categories?.is_income ?? false
   const formattedAmount = currencyFormatter.format(transaction.amount)
@@ -55,13 +58,12 @@ export function TransactionRow({ transaction, onEdit, memberMap }: TransactionRo
     }
   }, [translateX])
 
-  const handleDelete = useCallback(async () => {
-    if (!window.confirm('Delete this transaction?')) return
+  const handleDeleteConfirmed = useCallback(async () => {
     setDeleting(true)
     const result = await deleteTransaction(transaction.id)
     if (result.error) {
       setDeleting(false)
-      alert(result.error)
+      toast.error(result.error)
     }
     // On success, revalidation will remove from list
   }, [transaction.id])
@@ -77,7 +79,7 @@ export function TransactionRow({ transaction, onEdit, memberMap }: TransactionRo
       <div className="absolute inset-y-0 right-0 flex items-stretch">
         <button
           type="button"
-          className="flex w-[70px] items-center justify-center bg-blue-500 text-white"
+          className="flex w-[70px] items-center justify-center bg-[var(--color-info)] text-white"
           onClick={() => {
             resetSwipe()
             onEdit(transaction)
@@ -88,8 +90,8 @@ export function TransactionRow({ transaction, onEdit, memberMap }: TransactionRo
         </button>
         <button
           type="button"
-          className="flex w-[70px] items-center justify-center bg-red-500 text-white"
-          onClick={handleDelete}
+          className="flex w-[70px] items-center justify-center bg-[var(--color-danger)] text-white"
+          onClick={() => setConfirmDeleteOpen(true)}
           disabled={deleting}
           aria-label="Delete transaction"
         >
@@ -109,7 +111,7 @@ export function TransactionRow({ transaction, onEdit, memberMap }: TransactionRo
         {/* Left side: avatar + category dot + merchant + category name */}
         <div className="flex items-center gap-3 min-w-0">
           <Avatar size="sm" className="shrink-0">
-            <AvatarFallback className="text-[10px] font-bold bg-primary/10 text-primary">
+            <AvatarFallback className="text-xs font-bold bg-primary/10 text-primary">
               {memberMap[transaction.entered_by] ?? '?'}
             </AvatarFallback>
           </Avatar>
@@ -131,7 +133,7 @@ export function TransactionRow({ transaction, onEdit, memberMap }: TransactionRo
         {/* Right side: amount + account name + desktop actions */}
         <div className="flex items-center gap-2 shrink-0">
           <div className="text-right">
-            <p className={isIncome ? 'font-medium text-green-600 dark:text-green-400' : 'font-medium'}>
+            <p className={isIncome ? 'font-medium text-[var(--color-success)]' : 'font-medium'}>
               {displayAmount}
             </p>
             <p className="text-xs text-muted-foreground">
@@ -152,7 +154,7 @@ export function TransactionRow({ transaction, onEdit, memberMap }: TransactionRo
             <Button
               variant="destructive"
               size="icon-xs"
-              onClick={handleDelete}
+              onClick={() => setConfirmDeleteOpen(true)}
               disabled={deleting}
               aria-label="Delete transaction"
             >
@@ -161,6 +163,16 @@ export function TransactionRow({ transaction, onEdit, memberMap }: TransactionRo
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        title="Delete transaction?"
+        description="This will permanently remove this transaction."
+        confirmLabel="Delete"
+        variant="destructive"
+        onConfirm={handleDeleteConfirmed}
+      />
     </div>
   )
 }

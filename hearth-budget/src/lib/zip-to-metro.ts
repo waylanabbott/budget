@@ -140,6 +140,8 @@ const ZIP_PREFIX_TO_METRO: Record<string, string> = {
   '842': 'Salt Lake City, UT-ID',
   '843': 'Salt Lake City, UT-ID',
   '844': 'Salt Lake City, UT-ID',
+  '846': 'Provo-Orem, UT',
+  '847': 'Provo-Orem, UT',
   '850': 'Phoenix-Mesa-Chandler, AZ',
   '851': 'Phoenix-Mesa-Chandler, AZ',
   '852': 'Phoenix-Mesa-Chandler, AZ',

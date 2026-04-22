@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Hearth Budget',
-    short_name: 'Hearth',
+    name: 'Budget',
+    short_name: 'Budget',
     description: 'Track every dollar together',
     start_url: '/app',
     display: 'standalone',

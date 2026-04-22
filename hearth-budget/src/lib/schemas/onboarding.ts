@@ -1,17 +1,5 @@
 import * as z from 'zod'
 
-export const INCOME_BRACKETS = [
-  '<$15k',
-  '$15-30k',
-  '$30-40k',
-  '$40-50k',
-  '$50-70k',
-  '$70-100k',
-  '$100-150k',
-  '$150k+',
-] as const
-
-export type IncomeBracket = (typeof INCOME_BRACKETS)[number]
 
 export const householdNameSchema = z.object({
   name: z
@@ -28,12 +16,13 @@ export const locationSchema = z.object({
   metro: z.string().min(1, { error: 'Metro area is required.' }).trim(),
 })
 
-export const incomeBracketSchema = z.object({
-  income_bracket: z.enum(INCOME_BRACKETS, {
-    error: 'Please select an income bracket.',
-  }),
+export const incomeSchema = z.object({
+  income: z
+    .string()
+    .min(1, { error: 'Please enter your approximate annual income.' })
+    .regex(/^\d+$/, { error: 'Enter a whole number without commas or symbols.' }),
 })
 
 export type HouseholdNameInput = z.infer<typeof householdNameSchema>
 export type LocationInput = z.infer<typeof locationSchema>
-export type IncomeBracketInput = z.infer<typeof incomeBracketSchema>
+export type IncomeInput = z.infer<typeof incomeSchema>

@@ -89,7 +89,7 @@ export function CategoryPicker({ categories, value, onChange }: CategoryPickerPr
 
       {/* Expanded: all categories grouped by parent */}
       {expanded && (
-        <div className="max-h-[200px] space-y-3 overflow-y-auto">
+        <div className="max-h-48 space-y-3 overflow-y-auto">
           {/* Expense categories */}
           {parentCategories
             .filter((p) => !p.is_income)

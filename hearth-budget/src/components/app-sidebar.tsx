@@ -8,6 +8,7 @@ import {
   FileUp,
   PieChart,
   Target,
+  BarChart3,
   Settings,
   LogOut,
 } from 'lucide-react'
@@ -28,6 +29,7 @@ const NAV_ITEMS = [
   { href: '/app/import', label: 'Import', icon: FileUp },
   { href: '/app/budgets', label: 'Budgets', icon: PieChart },
   { href: '/app/goals', label: 'Goals', icon: Target },
+  { href: '/app/insights', label: 'Insights', icon: BarChart3 },
   { href: '/app/settings', label: 'Settings', icon: Settings },
 ] as const
 

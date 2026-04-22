@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { archiveCategory } from '@/app/actions/categories'
 import type { Database } from '@/types/database'
 import { Button } from '@/components/ui/button'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { CategoryFormDialog } from '@/components/category-form-dialog'
 
 type CategoryRow = Database['public']['Tables']['categories']['Row']
@@ -25,11 +26,9 @@ function CategoryRow({
   isChild?: boolean
 }) {
   const [isPending, startTransition] = useTransition()
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
-  function handleArchive() {
-    if (!window.confirm(`Archive "${category.name}"? It will be hidden from new transactions.`)) {
-      return
-    }
+  function handleArchiveConfirmed() {
     startTransition(async () => {
       const result = await archiveCategory(category.id)
       if (result.error) {
@@ -41,51 +40,63 @@ function CategoryRow({
   }
 
   return (
-    <div
-      className={`flex items-center justify-between rounded-lg border px-3 py-2 ${
-        isChild ? 'pl-8' : ''
-      }`}
-    >
-      <div className="flex items-center gap-3 min-w-0">
-        <span
-          className="inline-block h-4 w-4 shrink-0 rounded-full"
-          style={{ backgroundColor: category.color ?? '#6366F1' }}
-        />
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="font-medium truncate">{category.name}</span>
-          {category.icon && (
-            <span className="text-xs text-muted-foreground truncate">
-              {category.icon}
-            </span>
-          )}
-          {category.is_income && (
-            <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-400">
-              Income
-            </span>
-          )}
+    <>
+      <div
+        className={`flex items-center justify-between rounded-lg border px-3 py-2 ${
+          isChild ? 'pl-8' : ''
+        }`}
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <span
+            className="inline-block h-4 w-4 shrink-0 rounded-full"
+            style={{ backgroundColor: category.color ?? '#6366F1' }}
+          />
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="font-medium truncate">{category.name}</span>
+            {category.icon && (
+              <span className="text-xs text-muted-foreground truncate">
+                {category.icon}
+              </span>
+            )}
+            {category.is_income && (
+              <span className="inline-flex items-center rounded-full bg-[var(--color-success)]/10 px-2 py-0.5 text-xs font-medium text-[var(--color-success)]">
+                Income
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1 shrink-0">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onEdit(category)}
+            aria-label={`Edit ${category.name}`}
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setConfirmOpen(true)}
+            disabled={isPending}
+            aria-label={`Archive ${category.name}`}
+          >
+            <Archive className="h-3.5 w-3.5" />
+          </Button>
         </div>
       </div>
 
-      <div className="flex items-center gap-1 shrink-0">
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={() => onEdit(category)}
-          aria-label={`Edit ${category.name}`}
-        >
-          <Pencil className="h-3.5 w-3.5" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={handleArchive}
-          disabled={isPending}
-          aria-label={`Archive ${category.name}`}
-        >
-          <Archive className="h-3.5 w-3.5" />
-        </Button>
-      </div>
-    </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={`Archive "${category.name}"?`}
+        description="This category will be hidden from new transactions."
+        confirmLabel="Archive"
+        variant="destructive"
+        onConfirm={handleArchiveConfirmed}
+      />
+    </>
   )
 }
 

@@ -20,14 +20,14 @@ interface ImportHistoryProps {
 
 function StatusBadge({ status }: { status: string }) {
   const colors: Record<string, string> = {
-    complete: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-    error: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-    pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+    complete: 'bg-[var(--color-success)]/10 text-[var(--color-success)]',
+    error: 'bg-[var(--color-danger)]/10 text-[var(--color-danger)]',
+    pending: 'bg-[var(--color-warning)]/10 text-[var(--color-warning)]',
   }
 
   return (
     <span
-      className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${
+      className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
         colors[status] ?? 'bg-muted text-muted-foreground'
       }`}
     >

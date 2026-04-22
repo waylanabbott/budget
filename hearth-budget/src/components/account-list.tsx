@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { AccountFormDialog } from '@/components/account-form-dialog'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 
 type AccountRow = Database['public']['Tables']['accounts']['Row']
 
@@ -38,6 +39,7 @@ interface AccountListProps {
 export function AccountList({ accounts }: AccountListProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingAccount, setEditingAccount] = useState<AccountRow | null>(null)
+  const [archiveTarget, setArchiveTarget] = useState<AccountRow | null>(null)
   const [isPending, startTransition] = useTransition()
 
   const activeAccounts = accounts.filter((a) => !a.is_archived)
@@ -53,11 +55,10 @@ export function AccountList({ accounts }: AccountListProps) {
     setDialogOpen(true)
   }
 
-  function handleArchive(account: AccountRow) {
-    if (!window.confirm(`Archive "${account.name}"? You can't undo this.`)) {
-      return
-    }
+  function handleArchiveConfirmed() {
+    if (!archiveTarget) return
 
+    const account = archiveTarget
     startTransition(async () => {
       const result = await archiveAccount(account.id)
       if (result.error) {
@@ -99,7 +100,7 @@ export function AccountList({ accounts }: AccountListProps) {
                         <Button
                           variant="ghost"
                           size="icon-sm"
-                          onClick={() => handleArchive(account)}
+                          onClick={() => setArchiveTarget(account)}
                           disabled={isPending}
                           aria-label={`Archive ${account.name}`}
                         >
@@ -156,6 +157,16 @@ export function AccountList({ accounts }: AccountListProps) {
         account={editingAccount}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
+      />
+
+      <ConfirmDialog
+        open={archiveTarget !== null}
+        onOpenChange={(open) => { if (!open) setArchiveTarget(null) }}
+        title={`Archive "${archiveTarget?.name}"?`}
+        description="This account will be hidden from new transactions. You can't undo this."
+        confirmLabel="Archive"
+        variant="destructive"
+        onConfirm={handleArchiveConfirmed}
       />
     </>
   )

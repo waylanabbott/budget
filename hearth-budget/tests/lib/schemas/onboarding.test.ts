@@ -1,30 +1,12 @@
 import { describe, it, expect } from 'vitest'
 import {
-  INCOME_BRACKETS,
   householdNameSchema,
   locationSchema,
-  incomeBracketSchema,
+  incomeSchema,
   type HouseholdNameInput,
   type LocationInput,
-  type IncomeBracketInput,
+  type IncomeInput,
 } from '@/lib/schemas/onboarding'
-
-describe('INCOME_BRACKETS', () => {
-  it('has exactly 8 brackets', () => {
-    expect(INCOME_BRACKETS).toHaveLength(8)
-  })
-
-  it('contains all expected brackets', () => {
-    expect(INCOME_BRACKETS).toContain('<$15k')
-    expect(INCOME_BRACKETS).toContain('$15-30k')
-    expect(INCOME_BRACKETS).toContain('$30-40k')
-    expect(INCOME_BRACKETS).toContain('$40-50k')
-    expect(INCOME_BRACKETS).toContain('$50-70k')
-    expect(INCOME_BRACKETS).toContain('$70-100k')
-    expect(INCOME_BRACKETS).toContain('$100-150k')
-    expect(INCOME_BRACKETS).toContain('$150k+')
-  })
-})
 
 describe('householdNameSchema', () => {
   it('accepts valid household name', () => {
@@ -83,26 +65,34 @@ describe('locationSchema', () => {
   })
 })
 
-describe('incomeBracketSchema', () => {
-  it('accepts valid income bracket', () => {
-    const result = incomeBracketSchema.safeParse({ income_bracket: '$70-100k' })
+describe('incomeSchema', () => {
+  it('accepts valid numeric income', () => {
+    const result = incomeSchema.safeParse({ income: '48000' })
     expect(result.success).toBe(true)
   })
 
-  it('rejects invalid income bracket', () => {
-    const result = incomeBracketSchema.safeParse({ income_bracket: '$999k' })
+  it('rejects empty income', () => {
+    const result = incomeSchema.safeParse({ income: '' })
     expect(result.success).toBe(false)
   })
 
-  it('accepts all valid brackets', () => {
-    for (const bracket of INCOME_BRACKETS) {
-      const result = incomeBracketSchema.safeParse({ income_bracket: bracket })
-      expect(result.success).toBe(true)
-    }
+  it('rejects income with dollar sign', () => {
+    const result = incomeSchema.safeParse({ income: '$48000' })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects income with commas', () => {
+    const result = incomeSchema.safeParse({ income: '48,000' })
+    expect(result.success).toBe(false)
+  })
+
+  it('accepts large numbers', () => {
+    const result = incomeSchema.safeParse({ income: '150000' })
+    expect(result.success).toBe(true)
   })
 })
 
 // Type inference test (compile-time only)
 type _HouseholdNameInput = HouseholdNameInput
 type _LocationInput = LocationInput
-type _IncomeBracketInput = IncomeBracketInput
+type _IncomeInput = IncomeInput

@@ -9,13 +9,12 @@ import { cn } from '@/lib/utils'
 import {
   householdNameSchema,
   locationSchema,
-  incomeBracketSchema,
-  INCOME_BRACKETS,
+  incomeSchema,
 } from '@/lib/schemas/onboarding'
 import type {
   HouseholdNameInput,
   LocationInput,
-  IncomeBracketInput,
+  IncomeInput,
 } from '@/lib/schemas/onboarding'
 
 import { zipToMetro } from '@/lib/zip-to-metro'
@@ -38,8 +37,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
+import { DollarSign } from 'lucide-react'
 
 type Step = 1 | 2 | 3
 
@@ -71,9 +69,9 @@ export default function OnboardingPage() {
   })
 
   // Step 3 form
-  const step3Form = useForm<IncomeBracketInput>({
-    resolver: zodResolver(incomeBracketSchema),
-    defaultValues: { income_bracket: '' as IncomeBracketInput['income_bracket'] },
+  const step3Form = useForm<IncomeInput>({
+    resolver: zodResolver(incomeSchema),
+    defaultValues: { income: '' },
   })
 
   // Auto-detect metro when ZIP changes (Step 2)
@@ -95,14 +93,14 @@ export default function OnboardingPage() {
     setStep(3)
   }
 
-  async function handleStep3(data: IncomeBracketInput) {
+  async function handleStep3(data: IncomeInput) {
     setIsSubmitting(true)
     setServerError(null)
     const result = await createHousehold({
       name: accumulated.name,
       zip: accumulated.zip,
       metro: accumulated.metro,
-      income_bracket: data.income_bracket,
+      income_bracket: data.income,
     })
     setIsSubmitting(false)
     if (result?.error) {
@@ -229,34 +227,29 @@ export default function OnboardingPage() {
             </Form>
           )}
 
-          {/* Step 3: Income Bracket */}
+          {/* Step 3: Income */}
           {step === 3 && (
             <Form {...step3Form}>
               <form onSubmit={step3Form.handleSubmit(handleStep3)} className="space-y-4">
                 <FormField
                   control={step3Form.control}
-                  name="income_bracket"
+                  name="income"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Annual household income</FormLabel>
                       <p className="text-xs text-muted-foreground -mt-1">
-                        Used for benchmark comparisons — not stored beyond your household.
+                        A rough estimate is fine — used for benchmark comparisons.
                       </p>
                       <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          value={field.value}
-                          className="grid grid-cols-2 gap-2 pt-2"
-                        >
-                          {INCOME_BRACKETS.map((bracket) => (
-                            <div key={bracket} className="flex items-center space-x-2">
-                              <RadioGroupItem value={bracket} id={bracket} />
-                              <Label htmlFor={bracket} className="font-normal cursor-pointer">
-                                {bracket}
-                              </Label>
-                            </div>
-                          ))}
-                        </RadioGroup>
+                        <div className="relative">
+                          <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="48000"
+                            inputMode="numeric"
+                            className="pl-9"
+                            {...field}
+                          />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

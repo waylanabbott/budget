@@ -70,7 +70,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Hearth Budget</CardTitle>
+          <CardTitle className="text-2xl font-bold">Budget</CardTitle>
           <CardDescription>Track every dollar together</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

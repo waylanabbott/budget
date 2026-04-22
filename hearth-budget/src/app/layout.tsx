@@ -8,13 +8,13 @@ import { Toaster } from '@/components/ui/sonner'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Hearth Budget',
+  title: 'Budget',
   description: 'Track every dollar together',
-  applicationName: 'Hearth Budget',
+  applicationName: 'Budget',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Hearth Budget',
+    title: 'Budget',
   },
 }
 

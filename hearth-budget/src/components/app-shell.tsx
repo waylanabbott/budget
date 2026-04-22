@@ -24,7 +24,7 @@ export function AppShell({ children, householdName, userInitial, partnerName }: 
           <Separator orientation="vertical" className="mr-2 hidden h-4 md:flex" />
 
           {/* Household name or "You & Partner" */}
-          <span className="flex-1 text-sm font-semibold truncate">
+          <span className="flex-1 text-base font-semibold truncate">
             {partnerName ? `You & ${partnerName}` : householdName}
           </span>
 

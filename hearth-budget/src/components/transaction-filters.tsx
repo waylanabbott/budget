@@ -8,6 +8,7 @@ export type FilterState = {
   search: string
   account_id: string  // '' means all
   category_id: string // '' means all
+  entered_by: string  // '' means all
   date_from: string   // '' means no start bound (YYYY-MM-DD)
   date_to: string     // '' means no end bound (YYYY-MM-DD)
 }
@@ -16,6 +17,7 @@ export const EMPTY_FILTERS: FilterState = {
   search: '',
   account_id: '',
   category_id: '',
+  entered_by: '',
   date_from: '',
   date_to: '',
 }
@@ -33,9 +35,15 @@ type CategoryRow = {
   archived_at: string | null
 }
 
+type MemberInfo = {
+  user_id: string
+  label: string  // display name or "You"
+}
+
 interface TransactionFiltersProps {
   accounts: AccountRow[]
   categories: CategoryRow[]
+  members: MemberInfo[]
   filters: FilterState
   onFiltersChange: (filters: FilterState) => void
 }
@@ -43,6 +51,7 @@ interface TransactionFiltersProps {
 export function TransactionFilters({
   accounts,
   categories,
+  members,
   filters,
   onFiltersChange,
 }: TransactionFiltersProps) {
@@ -72,6 +81,7 @@ export function TransactionFilters({
   const activeFilterCount = [
     filters.account_id,
     filters.category_id,
+    filters.entered_by,
     filters.date_from,
     filters.date_to,
   ].filter(Boolean).length
@@ -127,6 +137,24 @@ export function TransactionFilters({
           ))}
         </select>
 
+        {/* Person filter */}
+        {members.length > 1 && (
+          <select
+            value={filters.entered_by}
+            onChange={(e) =>
+              onFiltersChange({ ...filters, entered_by: e.target.value })
+            }
+            className="h-8 shrink-0 rounded-lg border border-input bg-background px-2 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            <option value="">All people</option>
+            {members.map((m) => (
+              <option key={m.user_id} value={m.user_id}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+        )}
+
         {/* Date range */}
         <Input
           type="date"
@@ -134,7 +162,7 @@ export function TransactionFilters({
           onChange={(e) =>
             onFiltersChange({ ...filters, date_from: e.target.value })
           }
-          className="h-8 w-[130px] shrink-0 text-sm"
+          className="h-8 w-32 shrink-0 text-sm"
           aria-label="From date"
         />
         <Input
@@ -143,7 +171,7 @@ export function TransactionFilters({
           onChange={(e) =>
             onFiltersChange({ ...filters, date_to: e.target.value })
           }
-          className="h-8 w-[130px] shrink-0 text-sm"
+          className="h-8 w-32 shrink-0 text-sm"
           aria-label="To date"
         />
 

@@ -117,11 +117,11 @@ export function CsvPreview({
           Preview &mdash; {rows.length} rows
         </h2>
         {detectedFormatName ? (
-          <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-400">
+          <span className="rounded-full bg-[var(--color-success)]/10 px-2.5 py-0.5 text-xs font-medium text-[var(--color-success)]">
             {detectedFormatName}
           </span>
         ) : (
-          <span className="rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+          <span className="rounded-full bg-[var(--color-warning)]/10 px-2.5 py-0.5 text-xs font-medium text-[var(--color-warning)]">
             Manual mapping
           </span>
         )}
@@ -208,7 +208,7 @@ export function CsvPreview({
                   <th key={i} className="px-3 py-2 text-left font-medium">
                     <div>{header}</div>
                     {mappingLabel && (
-                      <span className="inline-block mt-0.5 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                      <span className="inline-block mt-0.5 rounded bg-primary/10 px-1.5 py-0.5 text-xs font-semibold text-primary">
                         {mappingLabel}
                       </span>
                     )}
@@ -230,18 +230,18 @@ export function CsvPreview({
                   if (isMappedAmount && cell.trim()) {
                     const numVal = parseFloat(cell.replace(/[$,]/g, ''))
                     if (!isNaN(numVal)) {
-                      amountColor = numVal < 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'
+                      amountColor = numVal < 0 ? 'text-[var(--color-danger)]' : 'text-[var(--color-success)]'
                       // For unsigned expense mode, all values are expenses (red)
                       if (amountMode === 'single_unsigned_expense') {
-                        amountColor = 'text-red-600 dark:text-red-400'
+                        amountColor = 'text-[var(--color-danger)]'
                       }
                       // For debit column, always red
                       if (amountMode === 'debit_credit' && columnMapping.debit === colIdx) {
-                        amountColor = 'text-red-600 dark:text-red-400'
+                        amountColor = 'text-[var(--color-danger)]'
                       }
                       // For credit column, always green
                       if (amountMode === 'debit_credit' && columnMapping.credit === colIdx) {
-                        amountColor = 'text-green-600 dark:text-green-400'
+                        amountColor = 'text-[var(--color-success)]'
                       }
                     }
                   }

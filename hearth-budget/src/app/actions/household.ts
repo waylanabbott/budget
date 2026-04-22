@@ -28,18 +28,19 @@ export async function createHousehold(data: {
     redirect('/app/dashboard')
   }
 
-  const { error } = await supabase.from('households').insert({
-    name: data.name,
-    zip: data.zip,
-    metro: data.metro,
-    income_bracket: data.income_bracket,
+  const { error } = await supabase.rpc('setup_household', {
+    p_name: data.name,
+    p_zip: data.zip,
+    p_metro: data.metro,
+    p_income_bracket: data.income_bracket,
   })
 
-  // DB triggers fire automatically on INSERT:
-  // - on_household_created: inserts user as 'owner' in household_members (HSHD-04)
-  // - on_household_created_categories: seeds 20 default categories (HSHD-05)
-
-  if (error) return { error: error.message }
+  if (error) {
+    if (error.message.includes('already belongs to a household')) {
+      redirect('/app/dashboard')
+    }
+    return { error: error.message }
+  }
 
   redirect('/app/dashboard')
 }
