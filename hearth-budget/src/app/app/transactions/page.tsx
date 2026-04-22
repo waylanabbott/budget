@@ -1,14 +1,33 @@
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
 import { getTransactions } from '@/app/actions/transactions'
 import { getAccounts } from '@/app/actions/accounts'
 import { getCategories } from '@/app/actions/categories'
+import { getHouseholdMembers } from '@/app/actions/members'
 import { TransactionList } from '@/components/transaction-list'
 
 export default async function TransactionsPage() {
-  const [txResult, acctResult, catResult] = await Promise.all([
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) redirect('/login')
+
+  const [txResult, acctResult, catResult, membersResult] = await Promise.all([
     getTransactions({ limit: 20 }),
     getAccounts(),
     getCategories(),
+    getHouseholdMembers(),
   ])
+
+  // Build memberMap: user_id -> initial
+  const memberMap: Record<string, string> = {}
+  for (const m of membersResult.data) {
+    memberMap[m.user_id] = (m.display_name?.[0] ?? '?').toUpperCase()
+  }
+  // Override current user with their email initial (more reliable)
+  memberMap[user.id] = (user.email?.[0] ?? '?').toUpperCase()
 
   return (
     <div className="space-y-4">
@@ -18,6 +37,7 @@ export default async function TransactionsPage() {
         initialCursor={txResult.nextCursor ?? null}
         accounts={acctResult.data ?? []}
         categories={catResult.data ?? []}
+        memberMap={memberMap}
       />
     </div>
   )

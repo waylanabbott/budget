@@ -3,6 +3,7 @@
 import { useRef, useState, useCallback } from 'react'
 import { Pencil, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { deleteTransaction } from '@/app/actions/transactions'
 import type { Database } from '@/types/database'
 
@@ -19,9 +20,10 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 interface TransactionRowProps {
   transaction: TransactionWithRelations
   onEdit: (tx: TransactionWithRelations) => void
+  memberMap: Record<string, string>
 }
 
-export function TransactionRow({ transaction, onEdit }: TransactionRowProps) {
+export function TransactionRow({ transaction, onEdit, memberMap }: TransactionRowProps) {
   const touchStartX = useRef(0)
   const [translateX, setTranslateX] = useState(0)
   const [swiped, setSwiped] = useState(false)
@@ -104,8 +106,13 @@ export function TransactionRow({ transaction, onEdit }: TransactionRowProps) {
         onTouchEnd={handleTouchEnd}
         onClick={swiped ? resetSwipe : undefined}
       >
-        {/* Left side: category dot + merchant + category name */}
+        {/* Left side: avatar + category dot + merchant + category name */}
         <div className="flex items-center gap-3 min-w-0">
+          <Avatar size="sm" className="shrink-0">
+            <AvatarFallback className="text-[10px] font-bold bg-primary/10 text-primary">
+              {memberMap[transaction.entered_by] ?? '?'}
+            </AvatarFallback>
+          </Avatar>
           <span
             className="shrink-0 size-2.5 rounded-full"
             style={{ backgroundColor: categoryColor }}

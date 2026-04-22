@@ -44,6 +44,7 @@ interface TransactionListProps {
   initialCursor: string | null
   accounts: AccountRow[]
   categories: CategoryRow[]
+  memberMap: Record<string, string>
 }
 
 function groupByDate(transactions: TransactionWithRelations[]) {
@@ -65,6 +66,7 @@ export function TransactionList({
   initialCursor,
   accounts,
   categories,
+  memberMap,
 }: TransactionListProps) {
   const [transactions, setTransactions] = useState(initialTransactions)
   const [cursor, setCursor] = useState<string | null>(initialCursor)
@@ -191,6 +193,7 @@ export function TransactionList({
                     key={tx.id}
                     transaction={tx}
                     onEdit={handleEdit}
+                    memberMap={memberMap}
                   />
                 ))}
               </div>
