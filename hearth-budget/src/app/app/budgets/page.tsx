@@ -1,35 +1,38 @@
-import { PieChart } from 'lucide-react'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { redirect } from 'next/navigation'
+import { format } from 'date-fns'
+import { createClient } from '@/lib/supabase/server'
+import { getBudgetsWithSpending, getUnbudgetedCategories } from '@/app/actions/budgets'
+import { BudgetList } from '@/components/budget-list'
 
-export default function BudgetsPage() {
+export default async function BudgetsPage() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) redirect('/login')
+
+  const currentMonth = format(new Date(), 'yyyy-MM')
+
+  const [{ data: budgets, month }, { data: unbudgeted }] = await Promise.all([
+    getBudgetsWithSpending(currentMonth),
+    getUnbudgetedCategories(currentMonth),
+  ])
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Budgets</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Set monthly spending caps and track your pace.
+          {format(new Date(), 'MMMM yyyy')} — set caps and track your pace.
         </p>
       </div>
 
-      <Card>
-        <CardHeader className="items-center text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-            <PieChart className="h-6 w-6 text-muted-foreground" />
-          </div>
-          <CardTitle>Coming soon</CardTitle>
-          <CardDescription className="max-w-sm">
-            Monthly budget caps per category with pace tracking — see if
-            you&apos;re on track, ahead, or over at a glance. Copy last
-            month&apos;s caps with one tap.
-          </CardDescription>
-        </CardHeader>
-      </Card>
+      <BudgetList
+        budgets={budgets}
+        month={month}
+        unbudgetedCategories={unbudgeted}
+      />
     </div>
   )
 }
