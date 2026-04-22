@@ -151,11 +151,11 @@ export async function getTransactions(params: {
     .order('id', { ascending: false })
     .limit(limit + 1) // fetch one extra to determine if there's a next page
 
-  // Apply cursor (keyset pagination on created_at|id)
+  // Apply cursor (keyset pagination on occurred_on|id, matching primary sort)
   if (params.cursor) {
     const [cursorDate, cursorId] = params.cursor.split('|')
     query = query.or(
-      `created_at.lt.${cursorDate},and(created_at.eq.${cursorDate},id.lt.${cursorId})`
+      `occurred_on.lt.${cursorDate},and(occurred_on.eq.${cursorDate},id.lt.${cursorId})`
     )
   }
 
@@ -193,7 +193,7 @@ export async function getTransactions(params: {
   const items = hasMore ? rows.slice(0, limit) : rows
   const lastItem = items[items.length - 1]
   const nextCursor = hasMore && lastItem
-    ? `${lastItem.created_at}|${lastItem.id}`
+    ? `${lastItem.occurred_on}|${lastItem.id}`
     : null
 
   return { data: items, nextCursor }

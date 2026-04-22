@@ -142,7 +142,11 @@ export function TransactionList({
       setLoading(false)
       return
     }
-    setTransactions((prev) => [...prev, ...(result.data ?? [])])
+    setTransactions((prev) => {
+      const existingIds = new Set(prev.map((tx) => tx.id))
+      const newTxs = (result.data ?? []).filter((tx) => !existingIds.has(tx.id))
+      return [...prev, ...newTxs]
+    })
     setCursor(result.nextCursor ?? null)
     setHasMore(!!result.nextCursor)
     setLoading(false)
