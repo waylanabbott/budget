@@ -9,7 +9,7 @@
 
 - [x] **Phase 1: Bootstrap** - Next.js 16 + Supabase + PWA shell + database schema and security (completed 2026-04-22)
 - [x] **Phase 2: Auth & Onboarding** - User authentication and household setup (completed 2026-04-22)
-- [ ] **Phase 3: Transactions** - Core transaction entry, accounts, and categories
+- [x] **Phase 3: Transactions** - Core transaction entry, accounts, and categories (completed 2026-04-22)
 - [ ] **Phase 4: Household Sharing** - Invite link, real-time sync, partner UI
 - [ ] **Phase 5: CSV Import** - Bank CSV upload, mapping, dedup, and undo
 - [ ] **Phase 6: Budgets, Goals & Dashboard** - Budget caps, savings goals, and the main dashboard
@@ -69,9 +69,9 @@ Plans:
 - [x] 03-01-PLAN.md — Zod v4 schemas and server actions for accounts, categories, and transactions (data layer)
 - [x] 03-02-PLAN.md — Accounts page with create, edit, archive, and balance display
 - [x] 03-03-PLAN.md — Categories management page with hierarchical display, create, edit, archive
-- [ ] 03-04-PLAN.md — Floating "+" FAB, transaction entry bottom sheet with amount-first input, category picker, merchant autocomplete
-- [ ] 03-05-PLAN.md — Transaction list page with date grouping, infinite scroll, search/filter, swipe edit/delete
-- [ ] 03-06-PLAN.md — Build verification and manual smoke test checkpoint
+- [x] 03-04-PLAN.md — Floating "+" FAB, transaction entry bottom sheet with amount-first input, category picker, merchant autocomplete
+- [x] 03-05-PLAN.md — Transaction list page with date grouping, infinite scroll, search/filter, swipe edit/delete
+- [x] 03-06-PLAN.md — Build verification and manual smoke test checkpoint
 **UI hint**: yes
 
 ### Phase 4: Household Sharing
@@ -144,7 +144,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Bootstrap | 2/2 | Complete   | 2026-04-22 |
 | 2. Auth & Onboarding | 6/6 | Complete   | 2026-04-22 |
-| 3. Transactions | 0/6 | In progress | - |
+| 3. Transactions | 6/6 | Complete | 2026-04-22 |
 | 4. Household Sharing | 0/? | Not started | - |
 | 5. CSV Import | 0/? | Not started | - |
 | 6. Budgets, Goals & Dashboard | 0/? | Not started | - |
