@@ -27,7 +27,12 @@ export async function GET(request: NextRequest) {
       }
     )
 
-    await supabase.auth.exchangeCodeForSession(code)
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    if (error) {
+      return NextResponse.redirect(
+        new URL('/login?error=auth_callback_failed', requestUrl.origin)
+      )
+    }
 
     // Check if user has a household — route to onboarding if not
     const {

@@ -20,15 +20,11 @@ export default async function InvitePage({
 
   const supabase = await createClient()
 
-  // Query invite with household name join
-  // "public token read" RLS policy allows SELECT on unredeemed, non-expired invites
-  const { data: invite } = await supabase
-    .from('household_invites')
-    .select('token, expires_at, household_id, redeemed_at, households(name)')
-    .eq('token', token)
-    .maybeSingle()
+  const { data: invite } = await supabase.rpc('get_invite_by_token', {
+    p_token: token,
+  })
 
-  if (!invite || invite.redeemed_at) {
+  if (!invite || !invite.is_valid) {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-md">
@@ -49,8 +45,7 @@ export default async function InvitePage({
     )
   }
 
-  const householdName =
-    (invite.households as { name: string } | null)?.name ?? 'a household'
+  const householdName = invite.household_name ?? 'a household'
 
   const expiresText = formatDistanceToNow(parseISO(invite.expires_at), {
     addSuffix: true,

@@ -69,60 +69,14 @@ export async function redeemInvite(
 
   if (!user) redirect('/login')
 
-  // Check user is NOT already in a household
-  const { data: existingMember } = await supabase
-    .from('household_members')
-    .select('household_id')
-    .eq('user_id', user.id)
-    .maybeSingle()
+  const { data, error } = await supabase.rpc('redeem_invite', {
+    p_token: token,
+  })
 
-  if (existingMember) {
-    return { error: 'You are already in a household.' }
-  }
-
-  // Find the invite: must be unredeemed and not expired
-  const { data: invite, error: inviteError } = await supabase
-    .from('household_invites')
-    .select('id, household_id, token, expires_at, redeemed_at')
-    .eq('token', token)
-    .is('redeemed_at', null)
-    .gt('expires_at', new Date().toISOString())
-    .maybeSingle()
-
-  if (inviteError || !invite) {
-    return { error: 'This invite link is invalid or has expired.' }
-  }
-
-  // Step 1: Mark invite as redeemed (must happen BEFORE member insert for RLS)
-  const { error: updateError } = await supabase
-    .from('household_invites')
-    .update({
-      redeemed_by: user.id,
-      redeemed_at: new Date().toISOString(),
-    })
-    .eq('id', invite.id)
-
-  if (updateError) {
-    return { error: updateError.message }
-  }
-
-  // Step 2: Insert user as household member with display_name from email
-  const displayName = user.email?.split('@')[0] ?? null
-  const { error: memberError } = await supabase
-    .from('household_members')
-    .insert({
-      household_id: invite.household_id,
-      user_id: user.id,
-      role: 'member',
-      display_name: displayName,
-    })
-
-  if (memberError) {
-    return { error: memberError.message }
-  }
+  if (error) return { error: error.message }
 
   revalidatePath('/app/dashboard')
-  return { data: { household_id: invite.household_id } }
+  return { data: { household_id: data } }
 }
 
 export async function getActiveInvites(): Promise<{
