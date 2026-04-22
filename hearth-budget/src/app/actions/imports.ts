@@ -87,25 +87,33 @@ export async function suggestCategories(
       { category_id: string; category_name: string } | null
     > = {}
 
-    for (const merchant of uniqueMerchants) {
-      const { data } = await supabase
-        .from('transactions')
-        .select('category_id, merchant, categories(name)')
-        .eq('household_id', householdId)
-        .ilike('merchant', merchant)
-        .not('category_id', 'is', null)
-        .order('created_at', { ascending: false })
-        .limit(1)
+    // Single query: get the most recent categorized transaction per merchant
+    const { data } = await supabase
+      .from('transactions')
+      .select('category_id, merchant, categories(name), created_at')
+      .eq('household_id', householdId)
+      .not('category_id', 'is', null)
+      .not('merchant', 'is', null)
+      .order('created_at', { ascending: false })
 
-      if (data && data[0] && data[0].category_id) {
-        const cat = data[0].categories as { name: string } | null
-        suggestions[merchant] = {
-          category_id: data[0].category_id,
+    const seen = new Set<string>()
+    for (const row of data ?? []) {
+      if (!row.merchant) continue
+      const key = row.merchant.toLowerCase().trim()
+      if (seen.has(key)) continue
+      seen.add(key)
+
+      if (uniqueMerchants.includes(key) && row.category_id) {
+        const cat = row.categories as { name: string } | null
+        suggestions[key] = {
+          category_id: row.category_id,
           category_name: cat?.name ?? 'Unknown',
         }
-      } else {
-        suggestions[merchant] = null
       }
+    }
+
+    for (const m of uniqueMerchants) {
+      if (!(m in suggestions)) suggestions[m] = null
     }
 
     return { suggestions }

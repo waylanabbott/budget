@@ -11,6 +11,7 @@ import { getAccounts } from '@/app/actions/accounts'
 import { FinancialHealthDashboard } from '@/components/goals/financial-health-dashboard'
 import { GoalList } from '@/components/goals/goal-list'
 import { CreateGoalButton } from '@/components/goals/create-goal-button'
+import { RealtimeRefresh } from '@/components/realtime-refresh'
 
 export default async function GoalsPage() {
   const supabase = await createClient()
@@ -19,6 +20,14 @@ export default async function GoalsPage() {
   } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')
+
+  const { data: member } = await supabase
+    .from('household_members')
+    .select('household_id')
+    .eq('user_id', user.id)
+    .single()
+
+  if (!member) redirect('/onboarding')
 
   const [
     { data: goals },
@@ -46,6 +55,7 @@ export default async function GoalsPage() {
 
   return (
     <div className="space-y-6">
+      <RealtimeRefresh table="goals" householdId={member.household_id} />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Goals</h1>

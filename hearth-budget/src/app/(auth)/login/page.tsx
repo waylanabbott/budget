@@ -8,7 +8,7 @@ import { Loader2 } from 'lucide-react'
 
 import { signUpSchema, signInSchema, magicLinkSchema } from '@/lib/schemas/auth'
 import type { SignUpInput, SignInInput, MagicLinkInput } from '@/lib/schemas/auth'
-import { signUpWithPassword, signInWithPassword, signInWithMagicLink } from '@/app/actions/auth'
+import { signUpWithPassword, signInWithPassword, signInWithMagicLink, requestPasswordReset } from '@/app/actions/auth'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,6 +21,8 @@ export default function LoginPage() {
   const [magicLinkSent, setMagicLinkSent] = useState(false)
   const [isMagicLinkLoading, setIsMagicLinkLoading] = useState(false)
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin')
+  const [resetSent, setResetSent] = useState(false)
+  const [isResetLoading, setIsResetLoading] = useState(false)
 
   // Sign In form
   const signInForm = useForm<SignInInput>({
@@ -51,6 +53,23 @@ export default function LoginPage() {
     const result = await signUpWithPassword(data)
     if (result?.error) {
       signUpForm.setError('root', { message: result.error })
+    }
+  }
+
+  async function handleForgotPassword() {
+    const email = signInForm.getValues('email')
+    if (!email) {
+      signInForm.setError('email', { message: 'Enter your email first.' })
+      return
+    }
+    setIsResetLoading(true)
+    const result = await requestPasswordReset(email)
+    setIsResetLoading(false)
+    if (result?.error) {
+      toast.error(result.error)
+    } else {
+      setResetSent(true)
+      toast.success('Check your email for a password reset link.')
     }
   }
 
@@ -126,6 +145,22 @@ export default function LoginPage() {
                   </Button>
                 </form>
               </Form>
+              {resetSent ? (
+                <p className="text-center text-sm text-muted-foreground">
+                  Check your email for a reset link.
+                </p>
+              ) : (
+                <Button
+                  variant="link"
+                  className="w-full text-xs text-muted-foreground"
+                  onClick={handleForgotPassword}
+                  disabled={isResetLoading}
+                  type="button"
+                >
+                  {isResetLoading && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
+                  Forgot password?
+                </Button>
+              )}
             </TabsContent>
 
             <TabsContent value="signup" className="space-y-4 pt-4">
