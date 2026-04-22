@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AppShell } from '@/components/app-shell'
+import { FabAddButton } from '@/components/fab-add-button'
 
 export default async function AppLayout({
   children,
@@ -30,6 +31,7 @@ export default async function AppLayout({
   return (
     <AppShell householdName={householdName} userInitial={userInitial}>
       {children}
+      <FabAddButton />
     </AppShell>
   )
 }
