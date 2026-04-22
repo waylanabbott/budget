@@ -14,6 +14,17 @@ export default async function TransactionsPage() {
 
   if (!user) redirect('/login')
 
+  // Get household ID for Realtime subscription
+  const { data: membership } = await supabase
+    .from('household_members')
+    .select('household_id')
+    .eq('user_id', user.id)
+    .single()
+
+  if (!membership) redirect('/onboarding')
+
+  const householdId = membership.household_id
+
   const [txResult, acctResult, catResult, membersResult] = await Promise.all([
     getTransactions({ limit: 20 }),
     getAccounts(),
@@ -38,6 +49,7 @@ export default async function TransactionsPage() {
         accounts={acctResult.data ?? []}
         categories={catResult.data ?? []}
         memberMap={memberMap}
+        householdId={householdId}
       />
     </div>
   )

@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react'
 import { getTransactions, updateTransaction } from '@/app/actions/transactions'
 import { TransactionRow, type TransactionWithRelations } from '@/components/transaction-row'
 import { TransactionFilters, type FilterState, EMPTY_FILTERS } from '@/components/transaction-filters'
+import { useRealtimeTransactions } from '@/hooks/use-realtime-transactions'
 import {
   Sheet,
   SheetContent,
@@ -45,6 +46,7 @@ interface TransactionListProps {
   accounts: AccountRow[]
   categories: CategoryRow[]
   memberMap: Record<string, string>
+  householdId: string
 }
 
 function groupByDate(transactions: TransactionWithRelations[]) {
@@ -67,6 +69,7 @@ export function TransactionList({
   accounts,
   categories,
   memberMap,
+  householdId,
 }: TransactionListProps) {
   const [transactions, setTransactions] = useState(initialTransactions)
   const [cursor, setCursor] = useState<string | null>(initialCursor)
@@ -78,6 +81,35 @@ export function TransactionList({
 
   const sentinelRef = useRef<HTMLDivElement>(null)
   const filtersKey = useRef('')
+
+  // Realtime: refetch current view when partner inserts/updates a transaction
+  const refetchTransactions = useCallback(async () => {
+    const result = await getTransactions({
+      limit: 20,
+      search: filters.search || undefined,
+      account_id: filters.account_id || undefined,
+      category_id: filters.category_id || undefined,
+      date_from: filters.date_from || undefined,
+      date_to: filters.date_to || undefined,
+    })
+    setTransactions(result.data ?? [])
+    setCursor(result.nextCursor ?? null)
+    setHasMore(!!result.nextCursor)
+  }, [filters])
+
+  // Realtime: remove deleted transaction from local state immediately
+  const handleRealtimeDelete = useCallback((id: string) => {
+    setTransactions((prev) => prev.filter((tx) => tx.id !== id))
+  }, [])
+
+  // Subscribe to Realtime INSERT/UPDATE/DELETE events for the household
+  const { status: realtimeStatus } = useRealtimeTransactions({
+    householdId,
+    onInsert: () => {}, // refetch handles this via onRefetch
+    onUpdate: () => {}, // refetch handles this via onRefetch
+    onDelete: handleRealtimeDelete,
+    onRefetch: refetchTransactions,
+  })
 
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return
@@ -168,12 +200,26 @@ export function TransactionList({
 
   return (
     <div className="space-y-2">
-      <TransactionFilters
-        accounts={accounts}
-        categories={categories}
-        filters={filters}
-        onFiltersChange={handleFiltersChange}
-      />
+      <div className="flex items-center gap-2">
+        <TransactionFilters
+          accounts={accounts}
+          categories={categories}
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+        />
+        {realtimeStatus === 'connected' && (
+          <span
+            className="inline-block size-2 rounded-full bg-green-500 shrink-0"
+            title="Live sync active"
+          />
+        )}
+        {realtimeStatus === 'disconnected' && (
+          <span
+            className="inline-block size-2 rounded-full bg-amber-500 shrink-0"
+            title="Live sync unavailable -- refreshes on tab focus"
+          />
+        )}
+      </div>
 
       <div className="rounded-lg border bg-card">
         {transactions.length === 0 && !loading && !isPending ? (
