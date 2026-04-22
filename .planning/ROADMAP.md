@@ -67,7 +67,7 @@ Plans:
 **Plans**: 6 plans
 Plans:
 - [x] 03-01-PLAN.md — Zod v4 schemas and server actions for accounts, categories, and transactions (data layer)
-- [ ] 03-02-PLAN.md — Accounts page with create, edit, archive, and balance display
+- [x] 03-02-PLAN.md — Accounts page with create, edit, archive, and balance display
 - [ ] 03-03-PLAN.md — Categories management page with hierarchical display, create, edit, archive
 - [ ] 03-04-PLAN.md — Floating "+" FAB, transaction entry bottom sheet with amount-first input, category picker, merchant autocomplete
 - [ ] 03-05-PLAN.md — Transaction list page with date grouping, infinite scroll, search/filter, swipe edit/delete

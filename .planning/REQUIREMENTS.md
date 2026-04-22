@@ -47,7 +47,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **ACCT-01**: User can create accounts (checking, savings, credit card, cash) with name and starting balance
 - [x] **ACCT-02**: User can edit and archive accounts
-- [ ] **ACCT-03**: Account list shows current balances
+- [x] **ACCT-03**: Account list shows current balances
 
 ### Categories
 
@@ -202,7 +202,7 @@ Updated during roadmap creation.
 | TXNS-08 | Phase 3 | Complete |
 | ACCT-01 | Phase 3 | Complete |
 | ACCT-02 | Phase 3 | Complete |
-| ACCT-03 | Phase 3 | Pending |
+| ACCT-03 | Phase 3 | Complete |
 | CATG-01 | Phase 3 | Complete |
 | CATG-02 | Phase 3 | Pending |
 | CATG-03 | Phase 3 | Pending |
