@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
   ArrowRightLeft,
-  PieChart,
   Target,
   BarChart3,
   Settings,
@@ -13,9 +12,9 @@ import {
 import { cn } from '@/lib/utils'
 
 const NAV_ITEMS = [
-  { href: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/app/dashboard', label: 'Home', icon: LayoutDashboard },
   { href: '/app/transactions', label: 'Transactions', icon: ArrowRightLeft },
-  { href: '/app/budgets', label: 'Budgets', icon: PieChart },
+  { href: '/app/goals', label: 'Goals', icon: Target },
   { href: '/app/insights', label: 'Insights', icon: BarChart3 },
   { href: '/app/settings', label: 'Settings', icon: Settings },
 ] as const

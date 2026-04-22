@@ -1,16 +1,18 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { getHouseholdMembers } from '@/app/actions/members'
 import { getTransactions } from '@/app/actions/transactions'
-import { LayoutDashboard, ArrowRightLeft } from 'lucide-react'
+import { getGoals, getAccountBalances } from '@/app/actions/goals'
+import { ArrowRightLeft, Target } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -20,9 +22,10 @@ export default async function DashboardPage() {
 
   if (!user) redirect('/login')
 
-  const [{ data: members }, txResult] = await Promise.all([
+  const [{ data: members }, txResult, { data: goals }] = await Promise.all([
     getHouseholdMembers(),
     getTransactions({ limit: 5 }),
+    getGoals(),
   ])
 
   const partner = members.find((m) => m.user_id !== user.id)
@@ -34,22 +37,75 @@ export default async function DashboardPage() {
 
   const recentTransactions = txResult.data ?? []
 
+  const allLinkedAccountIds = [
+    ...new Set(
+      goals.flatMap((g) =>
+        g.goal_account_links?.map((l) => l.account_id) ?? []
+      )
+    ),
+  ]
+  const { data: balances } = await getAccountBalances(allLinkedAccountIds)
+
+  const goalsWithProgress = goals.slice(0, 3).map((goal) => {
+    const links = goal.goal_account_links ?? []
+    const current = links.reduce((sum, l) => sum + (balances[l.account_id] ?? 0), 0)
+    const progress = goal.target_amount > 0
+      ? Math.min(100, Math.round((current / goal.target_amount) * 100))
+      : 0
+    return { ...goal, current, progress }
+  })
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold mb-2">{heading}</h1>
+      <h1 className="text-2xl font-bold">{heading}</h1>
 
-      <Card>
-        <CardHeader className="items-center text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-            <LayoutDashboard className="h-6 w-6 text-muted-foreground" />
+      {goalsWithProgress.length > 0 && (
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-semibold">Goals</h2>
+            <Link href="/app/goals" className="text-sm text-primary hover:underline">
+              View all
+            </Link>
           </div>
-          <CardTitle>Your dashboard is getting ready</CardTitle>
-          <CardDescription>
-            Once you add transactions and set budget caps, your spending summary
-            will appear here.
-          </CardDescription>
-        </CardHeader>
-      </Card>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {goalsWithProgress.map((goal) => (
+              <Card key={goal.id} className={goal.current >= goal.target_amount && goal.target_amount > 0 ? 'border-green-500/50' : ''}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium">{goal.name}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="flex items-baseline justify-between text-sm">
+                    <span className="font-medium tabular-nums">
+                      ${goal.current.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    </span>
+                    <span className="text-muted-foreground tabular-nums">
+                      of ${goal.target_amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    </span>
+                  </div>
+                  <Progress
+                    value={goal.progress}
+                    className={`h-2 ${goal.current >= goal.target_amount && goal.target_amount > 0 ? '[&>div]:bg-green-500' : ''}`}
+                  />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {goalsWithProgress.length === 0 && (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-8 text-center">
+            <Target className="h-8 w-8 text-muted-foreground mb-2" />
+            <p className="text-sm text-muted-foreground mb-2">
+              No goals yet — set a savings target to track your progress.
+            </p>
+            <Link href="/app/goals" className="text-sm text-primary hover:underline">
+              Create a goal
+            </Link>
+          </CardContent>
+        </Card>
+      )}
 
       <div>
         <h2 className="text-lg font-semibold mb-3">Recent transactions</h2>
