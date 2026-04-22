@@ -94,6 +94,13 @@ export interface RecurringBill {
   nextDueDate: string | null
 }
 
+export interface RecurringIncome {
+  name: string
+  amount: number
+  cadence: string
+  nextDate: string | null
+}
+
 export interface CashFlowPoint {
   date: string
   balance: number
@@ -107,7 +114,8 @@ export function projectCashFlow(
   days: number,
   recurringBills: RecurringBill[],
   avgDailySpend: number,
-  dailyStdDev: number
+  dailyStdDev: number,
+  recurringIncome: RecurringIncome[] = []
 ): CashFlowPoint[] {
   const points: CashFlowPoint[] = []
   let balance = startBalance
@@ -124,6 +132,12 @@ export function projectCashFlow(
           balance -= Math.abs(bill.amount)
         }
       }
+
+      for (const income of recurringIncome) {
+        if (isIncomeDue(income, dateStr)) {
+          balance += Math.abs(income.amount)
+        }
+      }
     }
 
     const deviation = dailyStdDev * Math.sqrt(d || 1)
@@ -136,6 +150,25 @@ export function projectCashFlow(
   }
 
   return points
+}
+
+function isIncomeDue(income: RecurringIncome, dateStr: string): boolean {
+  if (!income.nextDate) return false
+  const nextDate = new Date(income.nextDate + 'T00:00:00')
+  const checkDate = new Date(dateStr + 'T00:00:00')
+
+  if (income.cadence === 'biweekly') {
+    const diff = differenceInCalendarDays(checkDate, nextDate)
+    return diff >= 0 && diff % 14 === 0
+  }
+  if (income.cadence === 'monthly') {
+    return checkDate.getDate() === nextDate.getDate()
+  }
+  if (income.cadence === 'weekly') {
+    const diff = differenceInCalendarDays(checkDate, nextDate)
+    return diff >= 0 && diff % 7 === 0
+  }
+  return dateStr === income.nextDate
 }
 
 function isBillDue(bill: RecurringBill, dateStr: string): boolean {

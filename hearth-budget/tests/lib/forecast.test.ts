@@ -6,6 +6,7 @@ import {
   projectCashFlow,
   dailyStandardDeviation,
   checkForecastConfidence,
+  type RecurringIncome,
 } from '@/lib/forecast'
 
 describe('weightedAvgSpend', () => {
@@ -132,6 +133,34 @@ describe('projectCashFlow', () => {
     const points = projectCashFlow(5000, new Date(2026, 3, 22), 5, [], 50, 20)
     expect(points[0]!.upper - points[0]!.lower).toBeCloseTo(40, 0)
     expect(points[4]!.upper - points[4]!.lower).toBeCloseTo(80, 0)
+  })
+
+  it('adds recurring biweekly income on pay dates', () => {
+    const income: RecurringIncome[] = [
+      { name: 'Paycheck', amount: 1500, cadence: 'biweekly', nextDate: '2026-04-22' },
+    ]
+    // Start Apr 22 (payday), daily spend $50, no bills, no stddev
+    const points = projectCashFlow(1000, new Date(2026, 3, 22), 14, [], 50, 0, income)
+    // Day 0: 1000 (no income/spend on day 0)
+    expect(points[0]!.balance).toBe(1000)
+    // Day 1: 1000 - 50 = 950 (no payday)
+    expect(points[1]!.balance).toBe(950)
+    // Day 14: payday again (14 days after Apr 22 = May 6)
+    // Balance should be higher than without income
+    const withoutIncome = projectCashFlow(1000, new Date(2026, 3, 22), 14, [], 50, 0)
+    expect(points[14]!.balance).toBeGreaterThan(withoutIncome[14]!.balance)
+    // The difference should be 1500 (one payday hit on day 14)
+    expect(points[14]!.balance - withoutIncome[14]!.balance).toBe(1500)
+  })
+
+  it('balance trends up when income exceeds spending', () => {
+    const income: RecurringIncome[] = [
+      { name: 'Pay', amount: 2800, cadence: 'biweekly', nextDate: '2026-04-22' },
+    ]
+    // $50/day spend = $700 per 14 days, but income is $2800 per 14 days
+    const points = projectCashFlow(1000, new Date(2026, 3, 22), 28, [], 50, 0, income)
+    // After 28 days (2 paychecks): balance should be higher than start
+    expect(points[28]!.balance).toBeGreaterThan(points[0]!.balance)
   })
 })
 

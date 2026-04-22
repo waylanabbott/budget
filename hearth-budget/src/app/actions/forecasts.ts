@@ -14,6 +14,7 @@ import {
   type RunwayResult,
   type EndOfMonthProjection,
   type ForecastConfidence,
+  type RecurringIncome,
 } from '@/lib/forecast'
 import { subMonths, format, differenceInCalendarDays } from 'date-fns'
 
@@ -70,7 +71,7 @@ export async function getForecastData(): Promise<{
     await Promise.all([
       supabase
         .from('transactions')
-        .select('id, amount, occurred_on, category_id, categories(name, is_income)')
+        .select('id, amount, occurred_on, category_id, merchant, categories(name, is_income)')
         .eq('household_id', householdId)
         .gte('occurred_on', startDate)
         .lte('occurred_on', today)
@@ -241,7 +242,47 @@ export async function getForecastData(): Promise<{
       nextDueDate: b.next_due_date,
     }))
 
-    const cashFlow = projectCashFlow(totalBalance, now, 60, recurringBills, avgDaily, stdDev)
+    // Build recurring income from income transaction patterns
+    const incomeTxOnly = transactions.filter((tx) => {
+      const cat = tx.categories as { name: string; is_income: boolean } | null
+      return cat && cat.is_income
+    })
+
+    const incomeBySource: Record<string, { amounts: number[]; dates: string[] }> = {}
+    for (const tx of incomeTxOnly) {
+      const key = tx.merchant ?? 'Income'
+      if (!incomeBySource[key]) incomeBySource[key] = { amounts: [], dates: [] }
+      incomeBySource[key]!.amounts.push(Math.abs(Number(tx.amount)))
+      incomeBySource[key]!.dates.push(tx.occurred_on)
+    }
+
+    const recurringIncome: RecurringIncome[] = []
+    for (const [name, data] of Object.entries(incomeBySource)) {
+      if (data.dates.length < 2) {
+        // Single paycheck — assume biweekly
+        const lastDate = data.dates[data.dates.length - 1]!
+        recurringIncome.push({
+          name,
+          amount: data.amounts[data.amounts.length - 1]!,
+          cadence: 'biweekly',
+          nextDate: lastDate,
+        })
+        continue
+      }
+      const sorted = [...data.dates].sort()
+      const gaps: number[] = []
+      for (let i = 1; i < sorted.length; i++) {
+        gaps.push(differenceInCalendarDays(new Date(sorted[i]!), new Date(sorted[i - 1]!)))
+      }
+      const avgGap = gaps.reduce((a, b) => a + b, 0) / gaps.length
+      const cadence = avgGap <= 9 ? 'weekly' : avgGap <= 18 ? 'biweekly' : 'monthly'
+      const lastDate = sorted[sorted.length - 1]!
+      const lastAmount = data.amounts[data.amounts.length - 1]!
+
+      recurringIncome.push({ name, amount: lastAmount, cadence, nextDate: lastDate })
+    }
+
+    const cashFlow = projectCashFlow(totalBalance, now, 60, recurringBills, avgDaily, stdDev, recurringIncome)
 
     return {
       data: {
