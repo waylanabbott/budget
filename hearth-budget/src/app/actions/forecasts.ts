@@ -82,7 +82,7 @@ export async function getForecastData(): Promise<{
         .eq('household_id', householdId),
       supabase
         .from('accounts')
-        .select('id, name, starting_balance')
+        .select('id, name, type, starting_balance')
         .eq('household_id', householdId)
         .eq('is_archived', false),
       supabase
@@ -107,14 +107,18 @@ export async function getForecastData(): Promise<{
   const oldestTx = firstTx ? new Date(firstTx.occurred_on) : null
   const confidence = checkForecastConfidence(oldestTx, now)
 
-  // Account balances
+  // Account balances — only liquid accounts (checking, savings, cash, credit_card)
+  // Retirement and investment are long-term and not part of cash flow
+  const liquidTypes = new Set(['checking', 'savings', 'cash', 'credit_card'])
+  const liquidAccounts = accounts.filter((a) => liquidTypes.has(a.type))
+
   const { data: allTx } = await supabase
     .from('transactions')
     .select('amount, account_id')
     .eq('household_id', householdId)
 
   const accountBalances: Record<string, number> = {}
-  for (const acct of accounts) {
+  for (const acct of liquidAccounts) {
     accountBalances[acct.id] = Number(acct.starting_balance) || 0
   }
   for (const tx of allTx ?? []) {
