@@ -71,9 +71,9 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **CSVP-03**: Smart detection for common bank formats (Chase, BofA, Wells Fargo, Capital One, Apple Card, Discover, AMEX, Mint)
 - [x] **CSVP-04**: Amount handling supports both signed single column and separate debit/credit columns with explicit user confirmation of sign interpretation
 - [x] **CSVP-05**: Duplicate detection via hash (account_id + date + amount + first 20 chars merchant) with user choice to skip or import
-- [ ] **CSVP-06**: Category auto-suggestion from past household transactions for matching merchants
-- [ ] **CSVP-07**: Batch insert with source='csv', logged in imports table with row count, status, errors
-- [ ] **CSVP-08**: Import detail view with one-click "Undo this import" that deletes the batch
+- [x] **CSVP-06**: Category auto-suggestion from past household transactions for matching merchants
+- [x] **CSVP-07**: Batch insert with source='csv', logged in imports table with row count, status, errors
+- [x] **CSVP-08**: Import detail view with one-click "Undo this import" that deletes the batch
 
 ### Budgets
 
@@ -217,9 +217,9 @@ Updated during roadmap creation.
 | CSVP-03 | Phase 5 | Complete |
 | CSVP-04 | Phase 5 | Complete |
 | CSVP-05 | Phase 5 | Complete |
-| CSVP-06 | Phase 5 | Pending |
-| CSVP-07 | Phase 5 | Pending |
-| CSVP-08 | Phase 5 | Pending |
+| CSVP-06 | Phase 5 | Complete |
+| CSVP-07 | Phase 5 | Complete |
+| CSVP-08 | Phase 5 | Complete |
 | BDGT-01 | Phase 6 | Pending |
 | BDGT-02 | Phase 6 | Pending |
 | BDGT-03 | Phase 6 | Pending |

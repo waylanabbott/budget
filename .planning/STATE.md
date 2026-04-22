@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-22T14:54:01.968Z"
+last_updated: "2026-04-22T14:59:54.226Z"
 progress:
   total_phases: 8
   completed_phases: 4
   total_plans: 20
-  completed_plans: 18
+  completed_plans: 19
 ---
 
 # Project State: Hearth Budget
@@ -28,7 +28,7 @@ progress:
 ## Current Position
 
 Phase: 05 (csv-import) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Phase Map
 
@@ -100,6 +100,10 @@ Plan: 2 of 3
 | Web Crypto API for dedup hashing | crypto.subtle.digest works in both browser and Node — dedup.ts is imported by client components |
 | Chase split into 2 formats | Credit card and checking have different header signatures — separate entries for reliable detection |
 | Bank formats ordered most-specific first | detectBankFormat returns first match — ordering ensures precise format identification |
+| Phase 05-csv-import P02 | 2min | 2 tasks | 2 files |
+| Sequential await for hash generation | Web Crypto fast enough for <10k rows; simpler than Promise.all batching |
+| executeImport receives pre-transformed rows | Transform happens client-side for preview before server insert |
+| suggestCategories limited to 50 merchants | Prevent abuse from large CSV files |
 
 ### Todos
 
@@ -113,6 +117,6 @@ Plan: 2 of 3
 
 ## Session Continuity
 
-**Last updated:** 2026-04-22 after completing Phase 05 Plan 01
-**Next action:** Execute Phase 05 Plan 02 (CSV Transform + Preview UI)
-**Resume context:** Phase 05 Plan 01 complete. CSV parsing foundation delivered: RFC 4180 parser, 9-bank format auto-detection, async Web Crypto SHA-256 dedup hashing, amount normalization (3 modes), date parsing (4 formats), Zod v4 schemas, import_id FK migration. TypeScript clean. Ready for transform.ts and preview UI in Plan 02.
+**Last updated:** 2026-04-22 after completing Phase 05 Plan 02
+**Next action:** Execute Phase 05 Plan 03 (CSV Import UI)
+**Resume context:** Phase 05 Plan 02 complete. Async transformCsvRows function and 6 server actions delivered: checkDuplicates, suggestCategories, executeImport, getImports, getImportDetail, undoImport. All use getHouseholdId pattern with RLS. TypeScript clean. Ready for import UI in Plan 03.
