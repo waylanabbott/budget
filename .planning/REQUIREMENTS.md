@@ -9,11 +9,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Bootstrap
 
-- [ ] **BOOT-01**: App boots with `pnpm dev` showing a placeholder landing page
-- [ ] **BOOT-02**: TypeScript strict mode enabled with ESLint + Prettier
-- [ ] **BOOT-03**: PWA manifest served with "Hearth Budget" name and installable on mobile
-- [ ] **BOOT-04**: Supabase client/server utilities configured with `@supabase/ssr`
-- [ ] **BOOT-05**: Mobile viewport renders cleanly on 375px-wide screens
+- [x] **BOOT-01**: App boots with `pnpm dev` showing a placeholder landing page
+- [x] **BOOT-02**: TypeScript strict mode enabled with ESLint + Prettier
+- [x] **BOOT-03**: PWA manifest served with "Hearth Budget" name and installable on mobile
+- [x] **BOOT-04**: Supabase client/server utilities configured with `@supabase/ssr`
+- [x] **BOOT-05**: Mobile viewport renders cleanly on 375px-wide screens
 
 ### Authentication
 
@@ -171,11 +171,11 @@ Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BOOT-01 | Phase 1 | Pending |
-| BOOT-02 | Phase 1 | Pending |
-| BOOT-03 | Phase 1 | Pending |
-| BOOT-04 | Phase 1 | Pending |
-| BOOT-05 | Phase 1 | Pending |
+| BOOT-01 | Phase 1 | Complete |
+| BOOT-02 | Phase 1 | Complete |
+| BOOT-03 | Phase 1 | Complete |
+| BOOT-04 | Phase 1 | Complete |
+| BOOT-05 | Phase 1 | Complete |
 | DBSC-01 | Phase 1 | Pending |
 | DBSC-02 | Phase 1 | Pending |
 | DBSC-03 | Phase 1 | Pending |
