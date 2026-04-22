@@ -124,6 +124,7 @@ export async function getTransactions(params: {
     source: string
     external_id: string | null
     external_hash: string | null
+    import_id: string | null
     created_at: string
     updated_at: string
     categories: {
