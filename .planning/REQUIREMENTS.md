@@ -52,8 +52,8 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Categories
 
 - [x] **CATG-01**: User can view, create, edit, and archive categories
-- [ ] **CATG-02**: Categories support one level of nesting (parent/child)
-- [ ] **CATG-03**: Categories have icon and color properties
+- [x] **CATG-02**: Categories support one level of nesting (parent/child)
+- [x] **CATG-03**: Categories have icon and color properties
 
 ### Sharing
 
@@ -204,8 +204,8 @@ Updated during roadmap creation.
 | ACCT-02 | Phase 3 | Complete |
 | ACCT-03 | Phase 3 | Complete |
 | CATG-01 | Phase 3 | Complete |
-| CATG-02 | Phase 3 | Pending |
-| CATG-03 | Phase 3 | Pending |
+| CATG-02 | Phase 3 | Complete |
+| CATG-03 | Phase 3 | Complete |
 | SHAR-01 | Phase 4 | Pending |
 | SHAR-02 | Phase 4 | Pending |
 | SHAR-03 | Phase 4 | Pending |
