@@ -41,18 +41,21 @@ export type Database = {
           household_id: string
           user_id: string
           role: string
+          display_name: string | null
           joined_at: string
         }
         Insert: {
           household_id: string
           user_id: string
           role: string
+          display_name?: string | null
           joined_at?: string
         }
         Update: {
           household_id?: string
           user_id?: string
           role?: string
+          display_name?: string | null
           joined_at?: string
         }
         Relationships: [

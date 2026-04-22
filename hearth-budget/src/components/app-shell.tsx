@@ -8,9 +8,11 @@ interface AppShellProps {
   children: React.ReactNode
   householdName: string
   userInitial: string
+  partnerName: string | null // null = solo household
+  memberMap: Record<string, string> // user_id -> initial
 }
 
-export function AppShell({ children, householdName, userInitial }: AppShellProps) {
+export function AppShell({ children, householdName, userInitial, partnerName }: AppShellProps) {
   return (
     <SidebarProvider>
       <AppSidebar householdName={householdName} />
@@ -21,8 +23,10 @@ export function AppShell({ children, householdName, userInitial }: AppShellProps
           <SidebarTrigger className="-ml-1 hidden md:flex" />
           <Separator orientation="vertical" className="mr-2 hidden h-4 md:flex" />
 
-          {/* Household name */}
-          <span className="flex-1 text-sm font-semibold truncate">{householdName}</span>
+          {/* Household name or "You & Partner" */}
+          <span className="flex-1 text-sm font-semibold truncate">
+            {partnerName ? `You & ${partnerName}` : householdName}
+          </span>
 
           {/* Avatar initial — right side */}
           <Avatar className="h-8 w-8">
