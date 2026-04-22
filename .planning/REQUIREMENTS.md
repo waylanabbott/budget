@@ -34,24 +34,24 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Transactions
 
-- [ ] **TXNS-01**: User can add a transaction with amount, category, account, date, merchant, and notes
+- [x] **TXNS-01**: User can add a transaction with amount, category, account, date, merchant, and notes
 - [ ] **TXNS-02**: Transaction entry is completable in under 5 seconds on mobile (amount-first, recent categories, no scroll to submit)
 - [ ] **TXNS-03**: Floating "+" button accessible from every /app page opens new-transaction sheet
 - [ ] **TXNS-04**: User can view transactions grouped by date with infinite scroll
 - [ ] **TXNS-05**: User can search and filter transactions by account, category, and date range
 - [ ] **TXNS-06**: User can edit and delete transactions (swipe on mobile, buttons on desktop)
 - [ ] **TXNS-07**: Merchant autocomplete from past household transactions
-- [ ] **TXNS-08**: Amount validated as positive decimal with max 2 decimal places; sign inferred from category type
+- [x] **TXNS-08**: Amount validated as positive decimal with max 2 decimal places; sign inferred from category type
 
 ### Accounts
 
-- [ ] **ACCT-01**: User can create accounts (checking, savings, credit card, cash) with name and starting balance
-- [ ] **ACCT-02**: User can edit and archive accounts
+- [x] **ACCT-01**: User can create accounts (checking, savings, credit card, cash) with name and starting balance
+- [x] **ACCT-02**: User can edit and archive accounts
 - [ ] **ACCT-03**: Account list shows current balances
 
 ### Categories
 
-- [ ] **CATG-01**: User can view, create, edit, and archive categories
+- [x] **CATG-01**: User can view, create, edit, and archive categories
 - [ ] **CATG-02**: Categories support one level of nesting (parent/child)
 - [ ] **CATG-03**: Categories have icon and color properties
 
@@ -192,18 +192,18 @@ Updated during roadmap creation.
 | HSHD-04 | Phase 2 | Complete |
 | HSHD-05 | Phase 2 | Complete |
 | HSHD-06 | Phase 2 | Complete |
-| TXNS-01 | Phase 3 | Pending |
+| TXNS-01 | Phase 3 | Complete |
 | TXNS-02 | Phase 3 | Pending |
 | TXNS-03 | Phase 3 | Pending |
 | TXNS-04 | Phase 3 | Pending |
 | TXNS-05 | Phase 3 | Pending |
 | TXNS-06 | Phase 3 | Pending |
 | TXNS-07 | Phase 3 | Pending |
-| TXNS-08 | Phase 3 | Pending |
-| ACCT-01 | Phase 3 | Pending |
-| ACCT-02 | Phase 3 | Pending |
+| TXNS-08 | Phase 3 | Complete |
+| ACCT-01 | Phase 3 | Complete |
+| ACCT-02 | Phase 3 | Complete |
 | ACCT-03 | Phase 3 | Pending |
-| CATG-01 | Phase 3 | Pending |
+| CATG-01 | Phase 3 | Complete |
 | CATG-02 | Phase 3 | Pending |
 | CATG-03 | Phase 3 | Pending |
 | SHAR-01 | Phase 4 | Pending |

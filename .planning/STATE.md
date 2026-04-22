@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-22T05:45:00.000Z"
+last_updated: "2026-04-22T05:06:57.980Z"
 progress:
   total_phases: 8
   completed_phases: 2
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 14
+  completed_plans: 9
 ---
 
 # Project State: Hearth Budget
@@ -27,8 +27,8 @@ progress:
 
 ## Current Position
 
-Phase: 03 (transactions) — PENDING
-Plan: 0 of TBD
+Phase: 03 (transactions) — EXECUTING
+Plan: 2 of 6
 
 ## Phase Map
 
@@ -85,6 +85,10 @@ Plan: 0 of TBD
 | Auth server actions use server-side createClient() | Ensures correct cookie handling via @supabase/ssr for all auth mutations |
 | ThemeProvider added via Providers wrapper component | next-themes is a client component; cannot be inline in Server Component layout — wrapper pattern required |
 | /auth/callback checks household_members for routing | New users without a household go to /onboarding; returning users go to /app/dashboard |
+| Phase 03-01 P01 | 2min | 2 tasks | 6 files |
+| getHouseholdId() helper per action file | Extracted auth+household lookup to reduce repetition without cross-file import issues |
+| searchMerchants client-side dedup | Supabase JS has no DISTINCT; fetch 50 and deduplicate to 10 in JS |
+| Cursor pagination uses created_at | Stable ordering across transactions sharing the same occurred_on date |
 
 ### Todos
 
@@ -98,6 +102,6 @@ Plan: 0 of TBD
 
 ## Session Continuity
 
-**Last updated:** 2026-04-22 after completing Phase 02 (Auth & Onboarding)
-**Next action:** Plan and execute Phase 03 (Transactions)
-**Resume context:** Phases 1-2 complete. Auth flows (signup, login, magic link, signout), 3-step onboarding (name, ZIP/metro, income bracket), and protected app shell (bottom nav mobile, sidebar desktop) all built. Full database types generated for all 14 tables. Build passes, 32 tests passing. Manual browser smoke tests deferred until Supabase runs locally.
+**Last updated:** 2026-04-22 after completing 03-01-PLAN.md
+**Next action:** Execute remaining Phase 03 plans (03-02 through 03-06)
+**Resume context:** Phases 1-2 complete. Phase 03 Plan 01 complete: Zod v4 schemas and server actions for accounts, categories, and transactions. 6 new files, 14 exported functions. TypeScript compiles cleanly. Cursor-based pagination and merchant search ready for UI integration.

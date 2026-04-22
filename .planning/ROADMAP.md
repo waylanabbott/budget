@@ -66,7 +66,7 @@ Plans:
   5. Account list shows current balances and allows creating, editing, and archiving accounts; categories support one level of nesting with icon and color
 **Plans**: 6 plans
 Plans:
-- [ ] 03-01-PLAN.md — Zod v4 schemas and server actions for accounts, categories, and transactions (data layer)
+- [x] 03-01-PLAN.md — Zod v4 schemas and server actions for accounts, categories, and transactions (data layer)
 - [ ] 03-02-PLAN.md — Accounts page with create, edit, archive, and balance display
 - [ ] 03-03-PLAN.md — Categories management page with hierarchical display, create, edit, archive
 - [ ] 03-04-PLAN.md — Floating "+" FAB, transaction entry bottom sheet with amount-first input, category picker, merchant autocomplete
