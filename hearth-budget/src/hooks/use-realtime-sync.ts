@@ -22,20 +22,19 @@ export function useRealtimeSync({ channelName, onRefetch }: UseRealtimeSyncOptio
   const [status, setStatus] = useState<ConnectionStatus>('connecting')
   const channelRef = useRef<RealtimeChannel | null>(null)
   const supabaseRef = useRef(createClient())
+  const onRefetchRef = useRef(onRefetch)
+  onRefetchRef.current = onRefetch
 
-  // Visibility change handler -- refetch when tab regains focus.
-  // This is the SHAR-06 fallback: when Realtime is unreliable,
-  // the user still gets fresh data by switching back to the tab.
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        onRefetch()
+        onRefetchRef.current()
       }
     }
 
     document.addEventListener('visibilitychange', handleVisibilityChange)
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [onRefetch])
+  }, [])
 
   // Track connection status
   const updateStatus = useCallback((newStatus: ConnectionStatus) => {
