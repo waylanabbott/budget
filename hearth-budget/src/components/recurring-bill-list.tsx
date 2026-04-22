@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
-import { Plus, Pencil, Trash2, CalendarClock, ChevronDown } from 'lucide-react'
+import { Plus, Pencil, Trash2, CalendarClock, ChevronDown, TrendingUp, TrendingDown } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -24,6 +24,12 @@ import {
   type RecurringBillRow,
   type RecurringBillInput,
 } from '@/app/actions/recurring-bills'
+import {
+  getBlsBenchmarkForCategory,
+  QUINTILE_BOUNDS,
+  type QuintileKey,
+} from '@/lib/benchmarks/bls-cex-2024'
+import { cn } from '@/lib/utils'
 
 const CADENCE_LABELS: Record<string, string> = {
   weekly: 'Weekly',
@@ -32,7 +38,7 @@ const CADENCE_LABELS: Record<string, string> = {
   yearly: 'Yearly',
 }
 
-const formatCurrency = new Intl.NumberFormat('en-US', {
+const fmt = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
   minimumFractionDigits: 0,
@@ -42,27 +48,17 @@ const formatCurrency = new Intl.NumberFormat('en-US', {
 type AccountOption = { id: string; name: string }
 type CategoryOption = { id: string; name: string }
 
-function groupBillsByCategory(bills: RecurringBillRow[]) {
-  const groups = new Map<string, RecurringBillRow[]>()
-  for (const bill of bills) {
-    const key = bill.category_name ?? 'Other'
-    const group = groups.get(key)
-    if (group) {
-      group.push(bill)
-    } else {
-      groups.set(key, [bill])
-    }
-  }
-  return Array.from(groups.entries())
-    .sort(([, a], [, b]) => {
-      const totalA = a.reduce((s, bill) => s + bill.amount, 0)
-      const totalB = b.reduce((s, bill) => s + bill.amount, 0)
-      return totalB - totalA
-    })
-    .map(([category, bills]) => ({
-      category,
-      bills: bills.sort((a, b) => a.name.localeCompare(b.name)),
-    }))
+const CATEGORY_TO_BLS: Record<string, string> = {
+  'Gas': 'Transportation',
+  'Utilities': 'Housing',
+  'Car Insurance': 'Transportation',
+  'Subscriptions': 'Entertainment',
+  'Gym': 'Personal Care',
+  'Internet': 'Housing',
+  'Home Insurance': 'Housing',
+  'Parking': 'Transportation',
+  'Car Wash': 'Transportation',
+  'Food': 'Groceries',
 }
 
 function getPersonFromName(name: string): string {
@@ -78,41 +74,80 @@ function billToMonthly(bill: RecurringBillRow): number {
   return amt
 }
 
-function TotalBreakdown({ bills, monthlyTotal }: { bills: RecurringBillRow[]; monthlyTotal: number }) {
-  const [expanded, setExpanded] = useState(false)
+interface CategoryGroup {
+  category: string
+  bills: RecurringBillRow[]
+  monthlyTotal: number
+  byPerson: { name: string; total: number }[]
+  blsBenchmark: { monthlyAvg: number; blsName: string } | null
+  blsCategory: string
+  diffPercent: number | null
+}
 
-  const byPerson = new Map<string, number>()
+function buildCategoryGroups(
+  bills: RecurringBillRow[],
+  quintile: QuintileKey
+): CategoryGroup[] {
+  const groups = new Map<string, RecurringBillRow[]>()
   for (const bill of bills) {
-    const person = getPersonFromName(bill.name)
-    byPerson.set(person, (byPerson.get(person) ?? 0) + billToMonthly(bill))
+    const key = bill.category_name ?? 'Other'
+    const group = groups.get(key)
+    if (group) group.push(bill)
+    else groups.set(key, [bill])
   }
-  const people = Array.from(byPerson.entries()).sort(([, a], [, b]) => b - a)
 
+  return Array.from(groups.entries())
+    .filter(([cat]) => cat !== 'Savings Transfers')
+    .map(([category, categoryBills]) => {
+      const monthlyTotal = categoryBills.reduce((s, b) => s + billToMonthly(b), 0)
+
+      const personMap = new Map<string, number>()
+      for (const bill of categoryBills) {
+        const person = getPersonFromName(bill.name)
+        personMap.set(person, (personMap.get(person) ?? 0) + billToMonthly(bill))
+      }
+      const byPerson = Array.from(personMap.entries())
+        .map(([name, total]) => ({ name, total }))
+        .sort((a, b) => b.total - a.total)
+
+      const blsCategory = CATEGORY_TO_BLS[category] ?? category
+      const benchmark = getBlsBenchmarkForCategory(blsCategory, quintile)
+
+      const diffPercent =
+        benchmark && benchmark.monthlyAvg > 0
+          ? Math.round(((monthlyTotal - benchmark.monthlyAvg) / benchmark.monthlyAvg) * 100)
+          : null
+
+      return {
+        category,
+        bills: categoryBills.sort((a, b) => b.amount - a.amount),
+        monthlyTotal,
+        byPerson,
+        blsBenchmark: benchmark,
+        blsCategory,
+        diffPercent,
+      }
+    })
+    .sort((a, b) => b.monthlyTotal - a.monthlyTotal)
+}
+
+function DiffBadge({ percent }: { percent: number | null }) {
+  if (percent === null) return null
+  const isOver = percent > 0
+  const isUnder = percent < -10
   return (
-    <div className="pb-24 mb-24 rounded-xl border bg-muted/40 overflow-hidden">
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="flex w-full items-center justify-between px-4 py-3"
-      >
-        <span className="text-sm font-medium text-muted-foreground">Total monthly expenses</span>
-        <div className="flex items-center gap-2">
-          <span className="text-lg font-semibold tabular-nums">
-            {formatCurrency.format(monthlyTotal)}/mo
-          </span>
-          <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${expanded ? 'rotate-180' : ''}`} />
-        </div>
-      </button>
-      {expanded && (
-        <div className="border-t px-4 py-2 space-y-2">
-          {people.map(([person, total]) => (
-            <div key={person} className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">{person}</span>
-              <span className="text-sm font-medium tabular-nums">{formatCurrency.format(total)}/mo</span>
-            </div>
-          ))}
-        </div>
+    <span
+      className={cn(
+        'inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium',
+        isOver && 'bg-[var(--color-danger)]/10 text-[var(--color-danger)]',
+        isUnder && 'bg-[var(--color-success)]/10 text-[var(--color-success)]',
+        !isOver && !isUnder && 'bg-muted text-muted-foreground'
       )}
-    </div>
+    >
+      {isOver ? <TrendingUp className="h-3 w-3" /> : isUnder ? <TrendingDown className="h-3 w-3" /> : null}
+      {isOver ? '+' : ''}
+      {percent}%
+    </span>
   )
 }
 
@@ -120,21 +155,40 @@ interface Props {
   bills: RecurringBillRow[]
   accounts: AccountOption[]
   categories: CategoryOption[]
+  quintile: QuintileKey
 }
 
-export function RecurringBillList({ bills, accounts, categories }: Props) {
+export function RecurringBillList({ bills, accounts, categories, quintile }: Props) {
   const [formOpen, setFormOpen] = useState(false)
   const [editingBill, setEditingBill] = useState<RecurringBillRow | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<RecurringBillRow | null>(null)
   const [isPending, startTransition] = useTransition()
 
-  const monthlyTotal = bills.reduce((sum, b) => {
-    const amt = Math.abs(b.amount)
-    if (b.cadence === 'weekly') return sum + amt * 4.33
-    if (b.cadence === 'biweekly') return sum + amt * 2.17
-    if (b.cadence === 'yearly') return sum + amt / 12
-    return sum + amt
-  }, 0)
+  const nonSavingsBills = bills.filter(b => b.category_name !== 'Savings Transfers')
+  const savingsBills = bills.filter(b => b.category_name === 'Savings Transfers')
+
+  const monthlyTotal = nonSavingsBills.reduce((sum, b) => sum + billToMonthly(b), 0)
+  const savingsTotal = savingsBills.reduce((sum, b) => sum + billToMonthly(b), 0)
+
+  const groups = buildCategoryGroups(bills, quintile)
+
+  const blsTotal = getBlsBenchmarkForCategory('Housing', quintile)
+  const totalExp = (() => {
+    let sum = 0
+    for (const g of groups) {
+      if (g.blsBenchmark) sum += g.blsBenchmark.monthlyAvg
+    }
+    return sum
+  })()
+
+  const allPeople = new Map<string, number>()
+  for (const bill of nonSavingsBills) {
+    const person = getPersonFromName(bill.name)
+    allPeople.set(person, (allPeople.get(person) ?? 0) + billToMonthly(bill))
+  }
+  const peopleSorted = Array.from(allPeople.entries()).sort(([, a], [, b]) => b - a)
+
+  const bounds = QUINTILE_BOUNDS[quintile]
 
   function handleEdit(bill: RecurringBillRow) {
     setEditingBill(bill)
@@ -160,13 +214,42 @@ export function RecurringBillList({ bills, accounts, categories }: Props) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-28">
+      {/* Summary */}
+      <Card>
+        <CardContent className="pt-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-xs text-muted-foreground mb-1">Your Household</p>
+              <p className="text-2xl font-bold tabular-nums">{fmt.format(monthlyTotal)}<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
+              <div className="mt-2 space-y-0.5">
+                {peopleSorted.map(([person, total]) => (
+                  <div key={person} className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">{person}</span>
+                    <span className="tabular-nums font-medium">{fmt.format(total)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground mb-1">National Avg ({bounds.label})</p>
+              <p className="text-2xl font-bold tabular-nums text-muted-foreground">{totalExp > 0 ? fmt.format(totalExp) : '—'}<span className="text-sm font-normal">/mo</span></p>
+              <p className="text-xs text-muted-foreground mt-2">
+                BLS Consumer Expenditure Survey 2024 — comparable categories only
+              </p>
+            </div>
+          </div>
+          {savingsTotal > 0 && (
+            <div className="mt-3 pt-3 border-t flex justify-between text-sm">
+              <span className="text-muted-foreground">+ Savings transfers</span>
+              <span className="tabular-nums font-medium">{fmt.format(savingsTotal)}/mo</span>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm text-muted-foreground">
-            ~{formatCurrency.format(monthlyTotal)}/mo in recurring expenses
-          </p>
-        </div>
+        <p className="text-sm font-medium">By Category</p>
         <Button onClick={handleNew} size="sm">
           <Plus className="mr-1 h-4 w-4" />
           Add bill
@@ -177,26 +260,45 @@ export function RecurringBillList({ bills, accounts, categories }: Props) {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-8 text-center">
             <CalendarClock className="h-8 w-8 text-muted-foreground mb-2" />
-            <p className="text-sm text-muted-foreground mb-1">
-              No recurring bills yet
-            </p>
+            <p className="text-sm text-muted-foreground mb-1">No recurring bills yet</p>
             <p className="text-xs text-muted-foreground">
-              Add your rent, subscriptions, and other recurring expenses to improve cash flow forecasts.
+              Add your rent, subscriptions, and other recurring expenses.
             </p>
           </CardContent>
         </Card>
       ) : (
         <>
-          {groupBillsByCategory(bills).map(({ category, bills: groupBills }) => (
+          {groups.map(({ category, bills: groupBills, monthlyTotal: catTotal, byPerson, blsBenchmark, blsCategory, diffPercent }) => (
             <Card key={category}>
-              <CardHeader className="py-2 px-4">
-                <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  {category}
-                </CardTitle>
+              <CardHeader className="py-3 px-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-semibold">{category}</CardTitle>
+                  <DiffBadge percent={diffPercent} />
+                </div>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
+                  <span className="font-medium text-foreground tabular-nums">{fmt.format(catTotal)}/mo</span>
+                  {blsBenchmark ? (
+                    <span>
+                      vs {fmt.format(blsBenchmark.monthlyAvg)}/mo avg
+                      {blsCategory !== category && ` (${blsBenchmark.blsName})`}
+                    </span>
+                  ) : (
+                    <span>No national benchmark</span>
+                  )}
+                </div>
+                {byPerson.length > 1 && (
+                  <div className="flex gap-3 mt-1.5">
+                    {byPerson.map(({ name, total }) => (
+                      <span key={name} className="text-xs text-muted-foreground">
+                        {name}: <span className="tabular-nums font-medium text-foreground">{fmt.format(total)}</span>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </CardHeader>
               <CardContent className="p-0 divide-y">
                 {groupBills.map((bill) => (
-                  <div key={bill.id} className="flex items-center justify-between px-4 py-3">
+                  <div key={bill.id} className="flex items-center justify-between px-4 py-2.5">
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-sm truncate">{bill.name}</p>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
@@ -211,13 +313,9 @@ export function RecurringBillList({ bills, accounts, categories }: Props) {
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <span className="font-semibold tabular-nums text-sm">
-                        {formatCurrency.format(bill.amount)}
+                        {fmt.format(bill.amount)}
                       </span>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        onClick={() => handleEdit(bill)}
-                      >
+                      <Button variant="ghost" size="icon-sm" onClick={() => handleEdit(bill)}>
                         <Pencil className="h-3.5 w-3.5" />
                       </Button>
                       <Button
@@ -235,8 +333,6 @@ export function RecurringBillList({ bills, accounts, categories }: Props) {
               </CardContent>
             </Card>
           ))}
-
-          <TotalBreakdown bills={bills} monthlyTotal={monthlyTotal} />
         </>
       )}
 
@@ -343,10 +439,13 @@ function BillFormSheet({
             <Label htmlFor="bill-name">Name</Label>
             <Input
               id="bill-name"
-              placeholder="e.g. Rent, Netflix"
+              placeholder='e.g. Rent (Waylan)'
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
+            <p className="text-xs text-muted-foreground">
+              Add (Name) at the end to attribute to a person
+            </p>
           </div>
 
           <div className="space-y-1">
