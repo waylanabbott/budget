@@ -101,7 +101,11 @@ Plans:
   3. Duplicate transactions are flagged before import and the user can choose to skip or import each one
   4. Imported transactions are batch-inserted and logged with row count, status, and any errors
   5. Import history shows each import; clicking "Undo this import" removes the entire batch in one action
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 05-01-PLAN.md — Migration (import_id FK), Zod schemas, CSV parser, bank format detection (8 banks), dedup hash, amount normalization
+- [ ] 05-02-PLAN.md — CSV row transform, server actions (checkDuplicates, suggestCategories, executeImport, getImports, getImportDetail, undoImport)
+- [ ] 05-03-PLAN.md — Import page UI (upload, preview, column mapping, duplicate review, import history, undo), navigation updates
 **UI hint**: yes
 
 ### Phase 6: Budgets, Goals & Dashboard
@@ -137,7 +141,7 @@ Plans:
   1. Dashboard tiles show projected end-of-month spend per category against caps using the weighted 3-month average formula
   2. End-of-month projection updates as transactions are added; runway shows total balances divided by avg monthly net outflow
   3. Savings goal cards show projected hit date and "Not on track" message when the contribution rate is insufficient
-  4. 60-day cash flow chart shows recurring bills plus avg discretionary spend with a ±1 std dev confidence band
+  4. 60-day cash flow chart shows recurring bills plus avg discretionary spend with a +/-1 std dev confidence band
   5. Every forecast has a "Methodology" link that opens a modal explaining the formula and its inputs; forecasts below 60 days of history show "Still learning your patterns" instead
 **Plans**: TBD
 **UI hint**: yes
@@ -150,7 +154,7 @@ Plans:
 | 2. Auth & Onboarding | 6/6 | Complete   | 2026-04-22 |
 | 3. Transactions | 6/6 | Complete | 2026-04-22 |
 | 4. Household Sharing | 3/3 | Complete | 2026-04-22 |
-| 5. CSV Import | 0/? | Not started | - |
+| 5. CSV Import | 0/3 | Not started | - |
 | 6. Budgets, Goals & Dashboard | 0/? | Not started | - |
 | 7. Benchmarks | 0/? | Not started | - |
 | 8. Forecasting | 0/? | Not started | - |
