@@ -8,7 +8,7 @@
 ## Phases
 
 - [x] **Phase 1: Bootstrap** - Next.js 16 + Supabase + PWA shell + database schema and security (completed 2026-04-22)
-- [ ] **Phase 2: Auth & Onboarding** - User authentication and household setup
+- [x] **Phase 2: Auth & Onboarding** - User authentication and household setup (completed 2026-04-22)
 - [ ] **Phase 3: Transactions** - Core transaction entry, accounts, and categories
 - [ ] **Phase 4: Household Sharing** - Invite link, real-time sync, partner UI
 - [ ] **Phase 5: CSV Import** - Bank CSV upload, mapping, dedup, and undo
@@ -49,9 +49,9 @@ Plans:
 - [x] 02-01-PLAN.md — Migrate middleware.ts to proxy.ts (Next.js 16), add /app/* auth guard, create .env.local, scaffold vitest config + test stubs
 - [x] 02-02-PLAN.md — Install shadcn UI components (form, tabs, radio-group, sonner, sidebar, etc.), define Zod v4 schemas for auth and onboarding
 - [x] 02-03-PLAN.md — Build /login page (tabbed email/password + magic link), auth server actions, /auth/callback route handler
-- [ ] 02-04-PLAN.md — Build ZIP-to-metro lookup utility, household server action, 3-step onboarding page with stepper UI
-- [ ] 02-05-PLAN.md — Build protected app shell: layout.tsx, AppShell/BottomNav/AppSidebar components, 5 placeholder /app/* pages
-- [ ] 02-06-PLAN.md — Manual smoke test checkpoint: verify full auth + onboarding + shell flow against live Supabase
+- [x] 02-04-PLAN.md — Build ZIP-to-metro lookup utility, household server action, 3-step onboarding page with stepper UI
+- [x] 02-05-PLAN.md — Build protected app shell: layout.tsx, AppShell/BottomNav/AppSidebar components, 5 placeholder /app/* pages
+- [x] 02-06-PLAN.md — Manual smoke test checkpoint: verify full auth + onboarding + shell flow against live Supabase
 **UI hint**: yes
 
 ### Phase 3: Transactions
@@ -136,7 +136,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Bootstrap | 2/2 | Complete   | 2026-04-22 |
-| 2. Auth & Onboarding | 2/6 | In Progress|  |
+| 2. Auth & Onboarding | 6/6 | Complete   | 2026-04-22 |
 | 3. Transactions | 0/? | Not started | - |
 | 4. Household Sharing | 0/? | Not started | - |
 | 5. CSV Import | 0/? | Not started | - |

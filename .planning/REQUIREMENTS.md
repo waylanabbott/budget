@@ -25,12 +25,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Household
 
-- [ ] **HSHD-01**: User can create a household with name during onboarding
-- [ ] **HSHD-02**: User can set ZIP code and metro area during onboarding
-- [ ] **HSHD-03**: User can select income bracket from BLS CEX brackets during onboarding
-- [ ] **HSHD-04**: Household creator is auto-assigned as 'owner'
-- [ ] **HSHD-05**: Default category tree is auto-populated for new households
-- [ ] **HSHD-06**: App shell shows household name in header with bottom nav (mobile) / sidebar (desktop)
+- [x] **HSHD-01**: User can create a household with name during onboarding
+- [x] **HSHD-02**: User can set ZIP code and metro area during onboarding
+- [x] **HSHD-03**: User can select income bracket from BLS CEX brackets during onboarding
+- [x] **HSHD-04**: Household creator is auto-assigned as 'owner'
+- [x] **HSHD-05**: Default category tree is auto-populated for new households
+- [x] **HSHD-06**: App shell shows household name in header with bottom nav (mobile) / sidebar (desktop)
 
 ### Transactions
 
@@ -186,12 +186,12 @@ Updated during roadmap creation.
 | AUTH-03 | Phase 2 | Complete |
 | AUTH-04 | Phase 2 | Complete |
 | AUTH-05 | Phase 2 | Complete |
-| HSHD-01 | Phase 2 | Pending |
-| HSHD-02 | Phase 2 | Pending |
-| HSHD-03 | Phase 2 | Pending |
-| HSHD-04 | Phase 2 | Pending |
-| HSHD-05 | Phase 2 | Pending |
-| HSHD-06 | Phase 2 | Pending |
+| HSHD-01 | Phase 2 | Complete |
+| HSHD-02 | Phase 2 | Complete |
+| HSHD-03 | Phase 2 | Complete |
+| HSHD-04 | Phase 2 | Complete |
+| HSHD-05 | Phase 2 | Complete |
+| HSHD-06 | Phase 2 | Complete |
 | TXNS-01 | Phase 3 | Pending |
 | TXNS-02 | Phase 3 | Pending |
 | TXNS-03 | Phase 3 | Pending |

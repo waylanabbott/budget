@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-22T04:27:53.424Z"
+last_updated: "2026-04-22T05:45:00.000Z"
 progress:
   total_phases: 8
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 8
-  completed_plans: 5
+  completed_plans: 8
 ---
 
 # Project State: Hearth Budget
@@ -21,21 +21,21 @@ progress:
 
 **Core Value:** Two people can track every dollar together in real time — entering transactions in seconds, seeing budget progress, and comparing spending to honest public benchmarks.
 
-**Current Focus:** Phase 02 — auth-onboarding
+**Current Focus:** Phase 03 — transactions
 
 ---
 
 ## Current Position
 
-Phase: 02 (auth-onboarding) — EXECUTING
-Plan: 4 of 6
+Phase: 03 (transactions) — PENDING
+Plan: 0 of TBD
 
 ## Phase Map
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 1 | Bootstrap | Not started |
-| 2 | Auth & Onboarding | Not started |
+| 1 | Bootstrap | Complete |
+| 2 | Auth & Onboarding | Complete |
 | 3 | Transactions | Not started |
 | 4 | Household Sharing | Not started |
 | 5 | CSV Import | Not started |
@@ -47,9 +47,9 @@ Plan: 4 of 6
 
 ## Performance Metrics
 
-**Plans completed:** 0
-**Plans total:** TBD (filled after phase planning)
-**Requirements met:** 0/63
+**Plans completed:** 8
+**Plans total:** 8
+**Requirements met:** 21/63
 
 ---
 
@@ -98,6 +98,6 @@ Plan: 4 of 6
 
 ## Session Continuity
 
-**Last updated:** 2026-04-22 after completing Plan 02-03 (auth pages: login, callback, server actions)
-**Next action:** Execute plan 02-04 (onboarding flow)
-**Resume context:** hearth-budget/ has working auth server actions (signUpWithPassword, signInWithPassword, signInWithMagicLink, signOut), /login page with tabbed UI and magic link, /auth/callback route handler. ThemeProvider + Toaster wired to root layout. pnpm build passes. User must fill .env.local with real Supabase credentials before testing auth flows at runtime.
+**Last updated:** 2026-04-22 after completing Phase 02 (Auth & Onboarding)
+**Next action:** Plan and execute Phase 03 (Transactions)
+**Resume context:** Phases 1-2 complete. Auth flows (signup, login, magic link, signout), 3-step onboarding (name, ZIP/metro, income bracket), and protected app shell (bottom nav mobile, sidebar desktop) all built. Full database types generated for all 14 tables. Build passes, 32 tests passing. Manual browser smoke tests deferred until Supabase runs locally.
