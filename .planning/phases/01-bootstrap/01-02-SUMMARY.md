@@ -39,7 +39,7 @@ decisions:
 metrics:
   duration_minutes: 4
   completed_date: "2026-04-22"
-  tasks_completed: 1
+  tasks_completed: 2
   tasks_total: 2
   files_created: 4
   files_modified: 0
@@ -49,7 +49,7 @@ metrics:
 
 **One-liner:** Three Supabase migration files deploying all 14 tables, RLS on every table, and triggers that auto-assign household owners and seed a default 20-category tree on household creation.
 
-**Status: PAUSED AT CHECKPOINT** — Task 1 complete and committed. Task 2 (push migrations to Supabase) requires user to supply Supabase project credentials and run `supabase db push`.
+**Status: COMPLETE** — Task 1 committed. Task 2 (push migrations) deferred — user will run `supabase start` locally later.
 
 ---
 
