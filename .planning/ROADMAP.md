@@ -28,7 +28,10 @@
   3. The Supabase database has all v1 tables deployed via migrations with RLS policies active on every household-scoped table
   4. The app renders cleanly at 375px width with no horizontal overflow
   5. Service role key is only accessible server-side; browser network tab shows no service key exposure
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 01-01-PLAN.md — Scaffold Next.js 16, install all deps, configure TypeScript/ESLint/Prettier, Supabase three-client split, PWA with Serwist, placeholder landing page
+- [ ] 01-02-PLAN.md — Write and push three Supabase migration files (schema + RLS + triggers), verify 14 tables deployed with RLS active
 **UI hint**: yes
 
 ### Phase 2: Auth & Onboarding
@@ -125,7 +128,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Bootstrap | 0/? | Not started | - |
+| 1. Bootstrap | 0/2 | Not started | - |
 | 2. Auth & Onboarding | 0/? | Not started | - |
 | 3. Transactions | 0/? | Not started | - |
 | 4. Household Sharing | 0/? | Not started | - |
