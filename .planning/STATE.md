@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-22T04:19:07.564Z"
+last_updated: "2026-04-22T04:22:16.338Z"
 progress:
   total_phases: 8
   completed_phases: 1
   total_plans: 8
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State: Hearth Budget
@@ -28,7 +28,7 @@ progress:
 ## Current Position
 
 Phase: 02 (auth-onboarding) — EXECUTING
-Plan: 2 of 6
+Plan: 3 of 6
 
 ## Phase Map
 
@@ -77,6 +77,10 @@ Plan: 2 of 6
 | proxy.ts replaces middleware.ts | Next.js 16 proxy function replaces deprecated middleware for route interception |
 | Auth guard inlines createServerClient+getUser() | Avoids dual-client stale cookie issues vs calling updateSession() separately |
 | .env.local placeholder values | User fills in real Supabase credentials before first pnpm dev run |
+| Phase 02-auth-onboarding P02 | 5 | 2 tasks | 19 files |
+| base-nova shadcn uses @base-ui not @radix-ui | form.tsx written manually with React.cloneElement (no @radix-ui/react-slot installed) |
+| Zod v4 email trim order | z.email().trim() validates format before trimming — whitespace-padded emails fail validation (correct/secure behavior) |
+| shadcn add form no-ops with base-nova | form component not in base-nova registry — manual creation required for all projects using this style |
 
 ### Todos
 
@@ -90,6 +94,6 @@ Plan: 2 of 6
 
 ## Session Continuity
 
-**Last updated:** 2026-04-22 after completing Plan 02-01 (proxy migration + vitest scaffold)
-**Next action:** Execute plan 02-02
-**Resume context:** hearth-budget/ has proxy.ts (auth guard for /app/*), vitest.config.ts + test stubs, .env.local placeholders. User must fill .env.local with real Supabase credentials before pnpm dev. pnpm build passes. pnpm vitest run exits 0.
+**Last updated:** 2026-04-22 after completing Plan 02-02 (shadcn UI components + Zod v4 schemas)
+**Next action:** Execute plan 02-03 (auth pages)
+**Resume context:** hearth-budget/ has all shadcn UI components in src/components/ui/, Zod v4 schemas in src/lib/schemas/ (auth.ts + onboarding.ts), 25 passing schema tests. pnpm build passes. User must fill .env.local with real Supabase credentials before pnpm dev.

@@ -17,11 +17,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Authentication
 
-- [ ] **AUTH-01**: User can sign up with email and password
-- [ ] **AUTH-02**: User can sign up with magic link
-- [ ] **AUTH-03**: User can log in and stay logged in across sessions
-- [ ] **AUTH-04**: User can log out from any page
-- [ ] **AUTH-05**: Protected routes under /app/* require authentication via Supabase middleware
+- [x] **AUTH-01**: User can sign up with email and password
+- [x] **AUTH-02**: User can sign up with magic link
+- [x] **AUTH-03**: User can log in and stay logged in across sessions
+- [x] **AUTH-04**: User can log out from any page
+- [x] **AUTH-05**: Protected routes under /app/* require authentication via Supabase middleware
 
 ### Household
 
@@ -181,11 +181,11 @@ Updated during roadmap creation.
 | DBSC-03 | Phase 1 | Complete |
 | DBSC-04 | Phase 1 | Complete |
 | DBSC-05 | Phase 1 | Complete |
-| AUTH-01 | Phase 2 | Pending |
-| AUTH-02 | Phase 2 | Pending |
-| AUTH-03 | Phase 2 | Pending |
-| AUTH-04 | Phase 2 | Pending |
-| AUTH-05 | Phase 2 | Pending |
+| AUTH-01 | Phase 2 | Complete |
+| AUTH-02 | Phase 2 | Complete |
+| AUTH-03 | Phase 2 | Complete |
+| AUTH-04 | Phase 2 | Complete |
+| AUTH-05 | Phase 2 | Complete |
 | HSHD-01 | Phase 2 | Pending |
 | HSHD-02 | Phase 2 | Pending |
 | HSHD-03 | Phase 2 | Pending |

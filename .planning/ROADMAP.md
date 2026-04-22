@@ -47,7 +47,7 @@ Plans:
 **Plans**: 6 plans
 Plans:
 - [x] 02-01-PLAN.md — Migrate middleware.ts to proxy.ts (Next.js 16), add /app/* auth guard, create .env.local, scaffold vitest config + test stubs
-- [ ] 02-02-PLAN.md — Install shadcn UI components (form, tabs, radio-group, sonner, sidebar, etc.), define Zod v4 schemas for auth and onboarding
+- [x] 02-02-PLAN.md — Install shadcn UI components (form, tabs, radio-group, sonner, sidebar, etc.), define Zod v4 schemas for auth and onboarding
 - [ ] 02-03-PLAN.md — Build /login page (tabbed email/password + magic link), auth server actions, /auth/callback route handler
 - [ ] 02-04-PLAN.md — Build ZIP-to-metro lookup utility, household server action, 3-step onboarding page with stepper UI
 - [ ] 02-05-PLAN.md — Build protected app shell: layout.tsx, AppShell/BottomNav/AppSidebar components, 5 placeholder /app/* pages
@@ -136,7 +136,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Bootstrap | 2/2 | Complete   | 2026-04-22 |
-| 2. Auth & Onboarding | 0/6 | Not started | - |
+| 2. Auth & Onboarding | 2/6 | In Progress|  |
 | 3. Transactions | 0/? | Not started | - |
 | 4. Household Sharing | 0/? | Not started | - |
 | 5. CSV Import | 0/? | Not started | - |
