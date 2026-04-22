@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-22T04:22:16.338Z"
+last_updated: "2026-04-22T04:27:53.424Z"
 progress:
   total_phases: 8
   completed_phases: 1
   total_plans: 8
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State: Hearth Budget
@@ -28,7 +28,7 @@ progress:
 ## Current Position
 
 Phase: 02 (auth-onboarding) — EXECUTING
-Plan: 3 of 6
+Plan: 4 of 6
 
 ## Phase Map
 
@@ -81,6 +81,10 @@ Plan: 3 of 6
 | base-nova shadcn uses @base-ui not @radix-ui | form.tsx written manually with React.cloneElement (no @radix-ui/react-slot installed) |
 | Zod v4 email trim order | z.email().trim() validates format before trimming — whitespace-padded emails fail validation (correct/secure behavior) |
 | shadcn add form no-ops with base-nova | form component not in base-nova registry — manual creation required for all projects using this style |
+| Phase 02-auth-onboarding P03 | 12 | 2 tasks | 5 files |
+| Auth server actions use server-side createClient() | Ensures correct cookie handling via @supabase/ssr for all auth mutations |
+| ThemeProvider added via Providers wrapper component | next-themes is a client component; cannot be inline in Server Component layout — wrapper pattern required |
+| /auth/callback checks household_members for routing | New users without a household go to /onboarding; returning users go to /app/dashboard |
 
 ### Todos
 
@@ -94,6 +98,6 @@ Plan: 3 of 6
 
 ## Session Continuity
 
-**Last updated:** 2026-04-22 after completing Plan 02-02 (shadcn UI components + Zod v4 schemas)
-**Next action:** Execute plan 02-03 (auth pages)
-**Resume context:** hearth-budget/ has all shadcn UI components in src/components/ui/, Zod v4 schemas in src/lib/schemas/ (auth.ts + onboarding.ts), 25 passing schema tests. pnpm build passes. User must fill .env.local with real Supabase credentials before pnpm dev.
+**Last updated:** 2026-04-22 after completing Plan 02-03 (auth pages: login, callback, server actions)
+**Next action:** Execute plan 02-04 (onboarding flow)
+**Resume context:** hearth-budget/ has working auth server actions (signUpWithPassword, signInWithPassword, signInWithMagicLink, signOut), /login page with tabbed UI and magic link, /auth/callback route handler. ThemeProvider + Toaster wired to root layout. pnpm build passes. User must fill .env.local with real Supabase credentials before testing auth flows at runtime.

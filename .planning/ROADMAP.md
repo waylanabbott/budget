@@ -48,7 +48,7 @@ Plans:
 Plans:
 - [x] 02-01-PLAN.md — Migrate middleware.ts to proxy.ts (Next.js 16), add /app/* auth guard, create .env.local, scaffold vitest config + test stubs
 - [x] 02-02-PLAN.md — Install shadcn UI components (form, tabs, radio-group, sonner, sidebar, etc.), define Zod v4 schemas for auth and onboarding
-- [ ] 02-03-PLAN.md — Build /login page (tabbed email/password + magic link), auth server actions, /auth/callback route handler
+- [x] 02-03-PLAN.md — Build /login page (tabbed email/password + magic link), auth server actions, /auth/callback route handler
 - [ ] 02-04-PLAN.md — Build ZIP-to-metro lookup utility, household server action, 3-step onboarding page with stepper UI
 - [ ] 02-05-PLAN.md — Build protected app shell: layout.tsx, AppShell/BottomNav/AppSidebar components, 5 placeholder /app/* pages
 - [ ] 02-06-PLAN.md — Manual smoke test checkpoint: verify full auth + onboarding + shell flow against live Supabase
