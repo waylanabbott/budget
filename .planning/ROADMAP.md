@@ -86,7 +86,7 @@ Plans:
   5. When Realtime is unavailable, the app continues to work optimistically and syncs on tab focus
 **Plans**: 3 plans
 Plans:
-- [ ] 04-01-PLAN.md — Invite link server actions, public invite page, accept route, auth callback update, settings invite UI
+- [x] 04-01-PLAN.md — Invite link server actions, public invite page, accept route, auth callback update, settings invite UI
 - [x] 04-02-PLAN.md — Household member query, avatar+initial on transaction rows, "You and [partner]" header
 - [ ] 04-03-PLAN.md — Supabase Realtime subscription hooks with visibilitychange fallback, wired into transaction list
 **UI hint**: yes

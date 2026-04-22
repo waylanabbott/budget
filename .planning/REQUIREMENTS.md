@@ -57,8 +57,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Sharing
 
-- [ ] **SHAR-01**: Household owner can generate a one-time invite link (7-day expiry)
-- [ ] **SHAR-02**: Invited user can sign up or log in and join the household via invite link
+- [x] **SHAR-01**: Household owner can generate a one-time invite link (7-day expiry)
+- [x] **SHAR-02**: Invited user can sign up or log in and join the household via invite link
 - [x] **SHAR-03**: Each transaction shows who entered it (avatar + initial)
 - [x] **SHAR-04**: Dashboard shows "You and [partner]" summary
 - [ ] **SHAR-05**: Transactions, budgets, and goals update live via Supabase Realtime when partner makes changes
@@ -206,8 +206,8 @@ Updated during roadmap creation.
 | CATG-01 | Phase 3 | Complete |
 | CATG-02 | Phase 3 | Complete |
 | CATG-03 | Phase 3 | Complete |
-| SHAR-01 | Phase 4 | Pending |
-| SHAR-02 | Phase 4 | Pending |
+| SHAR-01 | Phase 4 | Complete |
+| SHAR-02 | Phase 4 | Complete |
 | SHAR-03 | Phase 4 | Complete |
 | SHAR-04 | Phase 4 | Complete |
 | SHAR-05 | Phase 4 | Pending |

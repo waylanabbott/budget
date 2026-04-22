@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-22T06:03:39.640Z"
+last_updated: "2026-04-22T06:05:41.077Z"
 progress:
   total_phases: 8
   completed_phases: 3
   total_plans: 17
-  completed_plans: 15
+  completed_plans: 16
 ---
 
 # Project State: Hearth Budget
@@ -28,7 +28,7 @@ progress:
 ## Current Position
 
 Phase: 04 (household-sharing) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Phase Map
 
@@ -92,6 +92,10 @@ Plan: 2 of 3
 | Phase 03-transactions P02 | 3min | 2 tasks | 4 files |
 | Phase 03-transactions P03 | 3min | 2 tasks | 4 files |
 | Phase 04-household-sharing P02 | 4min | 2 tasks | 9 files |
+| Phase 04-household-sharing P01 | 5min | 2 tasks | 9 files |
+| Fixed token redeemer RLS WITH CHECK | Original WITH CHECK (redeemed_at is null) blocked UPDATE setting redeemed_at — dropped and recreated |
+| Invite redemption order matters | UPDATE invite first, THEN INSERT member — RLS policy checks redeemed invite exists |
+| Link+buttonVariants not Button asChild | base-ui Button has no asChild prop — use Link with buttonVariants className |
 
 ### Todos
 
@@ -105,6 +109,6 @@ Plan: 2 of 3
 
 ## Session Continuity
 
-**Last updated:** 2026-04-22 after completing Phase 03
-**Next action:** Plan and execute Phase 04 (Household Sharing)
-**Resume context:** Phases 1-3 complete. Phase 03 delivered: transaction entry (FAB + bottom sheet), transaction list (infinite scroll, date groups, swipe edit/delete, filters), accounts CRUD, categories CRUD. 32 tests passing, build clean. Manual browser smoke tests deferred until Supabase runs locally.
+**Last updated:** 2026-04-22 after completing 04-01 (invite system)
+**Next action:** Continue Phase 04 — Plan 04-03 (role-based permissions)
+**Resume context:** Phase 04 Plan 01 complete. Invite link generation, public join page, accept route, and settings UI all implemented. Auth callback updated to pass through invite redirects. RLS migration adds invited-users-join-household policy. display_name populated on member insert.
