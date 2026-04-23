@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { Pencil, Archive } from 'lucide-react'
+import { Pencil, Archive, PiggyBank, Landmark, Wallet } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { archiveAccount } from '@/app/actions/accounts'
@@ -166,6 +166,8 @@ export function AccountList({ accounts, balances }: AccountListProps) {
         </>
       )}
 
+      <AccountTotals accounts={activeAccounts} balances={balances} />
+
       <AccountFormDialog
         account={editingAccount}
         open={dialogOpen}
@@ -182,5 +184,50 @@ export function AccountList({ accounts, balances }: AccountListProps) {
         onConfirm={handleArchiveConfirmed}
       />
     </>
+  )
+}
+
+function AccountTotals({
+  accounts,
+  balances,
+}: {
+  accounts: AccountRow[]
+  balances: Record<string, number>
+}) {
+  if (accounts.length === 0) return null
+
+  const groups: { label: string; types: string[]; icon: typeof PiggyBank }[] = [
+    { label: 'Savings', types: ['savings'], icon: PiggyBank },
+    { label: 'Retirement', types: ['retirement'], icon: Landmark },
+    { label: 'Checking', types: ['checking'], icon: Wallet },
+  ]
+
+  const totals = groups.map(({ label, types, icon }) => {
+    const matching = accounts.filter((a) => types.includes(a.type))
+    const total = matching.reduce(
+      (sum, a) => sum + (balances[a.id] ?? a.starting_balance),
+      0
+    )
+    return { label, total, count: matching.length, icon }
+  }).filter((g) => g.count > 0)
+
+  if (totals.length === 0) return null
+
+  return (
+    <div className="fixed bottom-14 left-0 right-0 z-30 border-t bg-background md:static md:bottom-auto md:z-auto md:mt-6 md:rounded-xl md:border">
+      <div className="flex divide-x">
+        {totals.map(({ label, total, icon: Icon }) => (
+          <div key={label} className="flex-1 px-3 py-3 text-center">
+            <div className="flex items-center justify-center gap-1.5 mb-0.5">
+              <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">{label}</span>
+            </div>
+            <p className={`text-base font-bold tabular-nums ${total < 0 ? 'text-destructive' : ''}`}>
+              {formatCurrency.format(total)}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
