@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   ArrowRightLeft,
   PieChart,
-  TrendingUp,
   Menu,
   Target,
   BarChart3,
@@ -23,11 +22,10 @@ const PRIMARY_ITEMS = [
   { href: '/app/dashboard', label: 'Home', icon: LayoutDashboard },
   { href: '/app/transactions', label: 'Transactions', icon: ArrowRightLeft },
   { href: '/app/budgets', label: 'Budgets', icon: PieChart },
-  { href: '/app/forecast', label: 'Forecast', icon: TrendingUp },
+  { href: '/app/goals', label: 'Goals', icon: Target },
 ] as const
 
 const MORE_ITEMS = [
-  { href: '/app/goals', label: 'Goals', icon: Target },
   { href: '/app/accounts', label: 'Accounts', icon: Wallet },
   { href: '/app/insights', label: 'Insights', icon: BarChart3 },
   { href: '/app/recurring-bills', label: 'Recurring Bills', icon: CalendarClock },

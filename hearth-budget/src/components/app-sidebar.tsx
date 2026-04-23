@@ -9,7 +9,6 @@ import {
   PieChart,
   Target,
   BarChart3,
-  TrendingUp,
   CalendarClock,
   Wallet,
   Settings,
@@ -33,7 +32,6 @@ const NAV_ITEMS = [
   { href: '/app/budgets', label: 'Budgets', icon: PieChart },
   { href: '/app/goals', label: 'Goals', icon: Target },
   { href: '/app/accounts', label: 'Accounts', icon: Wallet },
-  { href: '/app/forecast', label: 'Forecast', icon: TrendingUp },
   { href: '/app/insights', label: 'Insights', icon: BarChart3 },
   { href: '/app/recurring-bills', label: 'Recurring Bills', icon: CalendarClock },
   { href: '/app/settings', label: 'Settings', icon: Settings },
@@ -68,7 +66,7 @@ export function AppSidebar({ householdName }: AppSidebarProps) {
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter>
+      <SidebarFooter className="mb-20">
         <SidebarMenu>
           <SidebarMenuItem>
             <form action={signOut}>

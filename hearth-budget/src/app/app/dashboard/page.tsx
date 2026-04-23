@@ -4,9 +4,8 @@ import Link from 'next/link'
 import { getHouseholdMembers } from '@/app/actions/members'
 import { getTransactions } from '@/app/actions/transactions'
 import { getGoals, getAccountBalances } from '@/app/actions/goals'
-import { getForecastData } from '@/app/actions/forecasts'
 import { getBudgetsWithSpending, getSpendingByPerson } from '@/app/actions/budgets'
-import { ArrowRightLeft, Target } from 'lucide-react'
+import { ArrowRightLeft, Target, TrendingUp, TrendingDown } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import {
   Card,
@@ -16,9 +15,8 @@ import {
 } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { SpendVsCaps } from '@/components/dashboard/spend-vs-caps'
-import { RunwayWidget } from '@/components/dashboard/runway-widget'
-import { CashFlowMini } from '@/components/dashboard/cash-flow-mini'
 import { SpendingByPerson } from '@/components/dashboard/spending-by-person'
+import { IncomeVsExpenses } from '@/components/dashboard/income-vs-expenses'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -28,20 +26,37 @@ export default async function DashboardPage() {
 
   if (!user) redirect('/login')
 
+  const { data: member } = await supabase
+    .from('household_members')
+    .select('household_id')
+    .eq('user_id', user.id)
+    .single()
+
+  if (!member) redirect('/onboarding')
+
   const [
     { data: members },
     txResult,
     { data: goals },
-    forecastResult,
     budgetResult,
     personSpendResult,
+    billsResult,
+    incomeResult,
   ] = await Promise.all([
     getHouseholdMembers(),
     getTransactions({ limit: 5 }),
     getGoals(),
-    getForecastData(),
     getBudgetsWithSpending(),
     getSpendingByPerson(),
+    supabase
+      .from('recurring_bills')
+      .select('name, amount, cadence, categories(name)')
+      .eq('household_id', member.household_id),
+    supabase
+      .from('households')
+      .select('income_bracket')
+      .eq('id', member.household_id)
+      .single(),
   ])
 
   const partner = members.find((m) => m.user_id !== user.id)
@@ -52,7 +67,6 @@ export default async function DashboardPage() {
     : 'Dashboard'
 
   const recentTransactions = txResult.data ?? []
-  const forecast = forecastResult.data
   const budgets = budgetResult.data
 
   const memberNames: Record<string, string> = {}
@@ -60,6 +74,21 @@ export default async function DashboardPage() {
     memberNames[m.user_id] = m.display_name ?? 'Unknown'
   }
 
+  // Income vs expenses from recurring bills
+  const monthlyIncome = parseInt(incomeResult.data?.income_bracket || '0', 10) / 12
+  const bills = billsResult.data ?? []
+  let monthlyExpenses = 0
+  for (const bill of bills) {
+    const cat = bill.categories as { name: string } | null
+    if (cat?.name === 'Savings Transfers') continue
+    const amt = Math.abs(bill.amount)
+    if (bill.cadence === 'weekly') monthlyExpenses += amt * 4.33
+    else if (bill.cadence === 'biweekly') monthlyExpenses += amt * 2.17
+    else if (bill.cadence === 'yearly') monthlyExpenses += amt / 12
+    else monthlyExpenses += amt
+  }
+
+  // Goals
   const allLinkedAccountIds = [
     ...new Set(
       goals.flatMap((g) =>
@@ -82,6 +111,9 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">{heading}</h1>
 
+      {/* Income vs Fixed Expenses */}
+      <IncomeVsExpenses monthlyIncome={monthlyIncome} monthlyExpenses={monthlyExpenses} />
+
       {/* Per-person spending breakdown */}
       {personSpendResult.data.length > 1 && (
         <SpendingByPerson
@@ -90,19 +122,12 @@ export default async function DashboardPage() {
         />
       )}
 
-      {/* Budget + Runway widgets row */}
-      <div className="grid gap-3 sm:grid-cols-2">
-        <SpendVsCaps
-          budgets={budgets}
-          memberNames={memberNames}
-          currentUserId={user.id}
-        />
-        <RunwayWidget runway={forecast?.runway ?? { totalBalance: 0, avgMonthlyOutflow: 0, months: null }} />
-      </div>
-
-      {forecast && forecast.cashFlow.length > 0 && (
-        <CashFlowMini data={forecast.cashFlow} />
-      )}
+      {/* Budget caps */}
+      <SpendVsCaps
+        budgets={budgets}
+        memberNames={memberNames}
+        currentUserId={user.id}
+      />
 
       {goalsWithProgress.length > 0 && (
         <div>

@@ -101,7 +101,7 @@ export async function createRecurringBill(
   if (error) return { error: error.message }
 
   revalidatePath('/app/recurring-bills')
-  revalidatePath('/app/forecast')
+  revalidatePath('/app/dashboard')
   return {}
 }
 
@@ -131,7 +131,7 @@ export async function updateRecurringBill(
   if (error) return { error: error.message }
 
   revalidatePath('/app/recurring-bills')
-  revalidatePath('/app/forecast')
+  revalidatePath('/app/dashboard')
   return {}
 }
 
@@ -149,6 +149,6 @@ export async function deleteRecurringBill(
   if (error) return { error: error.message }
 
   revalidatePath('/app/recurring-bills')
-  revalidatePath('/app/forecast')
+  revalidatePath('/app/dashboard')
   return {}
 }
