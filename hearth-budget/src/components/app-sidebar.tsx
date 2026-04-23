@@ -4,8 +4,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
-  ArrowRightLeft,
-  FileUp,
   PieChart,
   Target,
   BarChart3,
@@ -27,13 +25,11 @@ import { signOut } from '@/app/actions/auth'
 
 const NAV_ITEMS = [
   { href: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/app/transactions', label: 'Transactions', icon: ArrowRightLeft },
-  { href: '/app/import', label: 'Import', icon: FileUp },
   { href: '/app/budgets', label: 'Budgets', icon: PieChart },
   { href: '/app/goals', label: 'Goals', icon: Target },
+  { href: '/app/recurring-bills', label: 'Recurring Bills', icon: CalendarClock },
   { href: '/app/accounts', label: 'Accounts', icon: Wallet },
   { href: '/app/insights', label: 'Insights', icon: BarChart3 },
-  { href: '/app/recurring-bills', label: 'Recurring Bills', icon: CalendarClock },
   { href: '/app/settings', label: 'Settings', icon: Settings },
 ] as const
 

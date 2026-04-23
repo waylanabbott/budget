@@ -2,11 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getHouseholdMembers } from '@/app/actions/members'
-import { getTransactions } from '@/app/actions/transactions'
 import { getGoals, getAccountBalances } from '@/app/actions/goals'
-import { getBudgetsWithSpending, getSpendingByPerson } from '@/app/actions/budgets'
-import { ArrowRightLeft, Target, TrendingUp, TrendingDown } from 'lucide-react'
-import { format, parseISO } from 'date-fns'
+import { Target } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -14,8 +11,6 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { SpendVsCaps } from '@/components/dashboard/spend-vs-caps'
-import { SpendingByPerson } from '@/components/dashboard/spending-by-person'
 import { IncomeVsExpenses } from '@/components/dashboard/income-vs-expenses'
 
 export default async function DashboardPage() {
@@ -36,18 +31,12 @@ export default async function DashboardPage() {
 
   const [
     { data: members },
-    txResult,
     { data: goals },
-    budgetResult,
-    personSpendResult,
     billsResult,
     incomeResult,
   ] = await Promise.all([
     getHouseholdMembers(),
-    getTransactions({ limit: 5 }),
     getGoals(),
-    getBudgetsWithSpending(),
-    getSpendingByPerson(),
     supabase
       .from('recurring_bills')
       .select('name, amount, cadence, categories(name)')
@@ -65,14 +54,6 @@ export default async function DashboardPage() {
   const heading = partnerDisplayName
     ? `You and ${partnerDisplayName}`
     : 'Dashboard'
-
-  const recentTransactions = txResult.data ?? []
-  const budgets = budgetResult.data
-
-  const memberNames: Record<string, string> = {}
-  for (const m of members) {
-    memberNames[m.user_id] = m.display_name ?? 'Unknown'
-  }
 
   // Income vs expenses from recurring bills
   const monthlyIncome = parseInt(incomeResult.data?.income_bracket || '0', 10) / 12
@@ -98,7 +79,7 @@ export default async function DashboardPage() {
   ]
   const { data: balances } = await getAccountBalances(allLinkedAccountIds)
 
-  const goalsWithProgress = goals.slice(0, 3).map((goal) => {
+  const goalsWithProgress = goals.map((goal) => {
     const links = goal.goal_account_links ?? []
     const current = links.reduce((sum, l) => sum + (balances[l.account_id] ?? 0), 0)
     const progress = goal.target_amount > 0
@@ -111,23 +92,7 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">{heading}</h1>
 
-      {/* Income vs Fixed Expenses */}
       <IncomeVsExpenses monthlyIncome={monthlyIncome} monthlyExpenses={monthlyExpenses} />
-
-      {/* Per-person spending breakdown */}
-      {personSpendResult.data.length > 1 && (
-        <SpendingByPerson
-          people={personSpendResult.data}
-          currentUserId={personSpendResult.currentUserId}
-        />
-      )}
-
-      {/* Budget caps */}
-      <SpendVsCaps
-        budgets={budgets}
-        memberNames={memberNames}
-        currentUserId={user.id}
-      />
 
       {goalsWithProgress.length > 0 && (
         <div>
@@ -176,51 +141,6 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       )}
-
-      <div>
-        <h2 className="text-lg font-semibold mb-3">Recent transactions</h2>
-        {recentTransactions.length > 0 ? (
-          <Card>
-            <CardContent className="divide-y">
-              {recentTransactions.map((tx) => (
-                <div
-                  key={tx.id}
-                  className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium truncate">
-                      {tx.merchant ?? 'No merchant'}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {format(parseISO(tx.occurred_on), 'MMM d, yyyy')}
-                      {tx.categories?.name ? ` · ${tx.categories.name}` : ''}
-                    </p>
-                  </div>
-                  <span
-                    className={
-                      tx.categories?.is_income
-                        ? 'font-semibold text-[var(--success)] tabular-nums'
-                        : 'font-semibold tabular-nums'
-                    }
-                  >
-                    {tx.categories?.is_income ? '+' : '-'}$
-                    {Math.abs(tx.amount).toFixed(2)}
-                  </span>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-8 text-center">
-              <ArrowRightLeft className="h-8 w-8 text-muted-foreground mb-2" />
-              <p className="text-sm text-muted-foreground">
-                No transactions yet
-              </p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
     </div>
   )
 }

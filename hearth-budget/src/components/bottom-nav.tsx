@@ -5,13 +5,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
-  ArrowRightLeft,
   PieChart,
   Menu,
   Target,
   BarChart3,
   CalendarClock,
-  FileUp,
   Settings,
   Wallet,
   X,
@@ -20,16 +18,14 @@ import { cn } from '@/lib/utils'
 
 const PRIMARY_ITEMS = [
   { href: '/app/dashboard', label: 'Home', icon: LayoutDashboard },
-  { href: '/app/transactions', label: 'Transactions', icon: ArrowRightLeft },
   { href: '/app/budgets', label: 'Budgets', icon: PieChart },
   { href: '/app/goals', label: 'Goals', icon: Target },
+  { href: '/app/recurring-bills', label: 'Bills', icon: CalendarClock },
 ] as const
 
 const MORE_ITEMS = [
   { href: '/app/accounts', label: 'Accounts', icon: Wallet },
   { href: '/app/insights', label: 'Insights', icon: BarChart3 },
-  { href: '/app/recurring-bills', label: 'Recurring Bills', icon: CalendarClock },
-  { href: '/app/import', label: 'Import', icon: FileUp },
   { href: '/app/settings', label: 'Settings', icon: Settings },
 ] as const
 
